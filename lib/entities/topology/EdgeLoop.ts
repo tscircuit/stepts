@@ -7,7 +7,10 @@ import type { OrientedEdge } from "./OrientedEdge"
 
 export class EdgeLoop extends Entity {
   readonly type = "EDGE_LOOP"
-  constructor(public name: string, public edges: Ref<OrientedEdge>[]) {
+  constructor(
+    public name: string,
+    public edges: Ref<OrientedEdge>[],
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {

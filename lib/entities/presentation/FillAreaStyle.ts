@@ -7,7 +7,10 @@ import type { FillAreaStyleColour } from "./FillAreaStyleColour"
 
 export class FillAreaStyle extends Entity {
   readonly type = "FILL_AREA_STYLE"
-  constructor(public name: string, public items: Ref<FillAreaStyleColour>[]) {
+  constructor(
+    public name: string,
+    public items: Ref<FillAreaStyleColour>[],
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {

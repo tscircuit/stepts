@@ -22,4 +22,7 @@ export class PresentationStyleAssignment extends Entity {
   }
 }
 
-register("PRESENTATION_STYLE_ASSIGNMENT", PresentationStyleAssignment.parse.bind(PresentationStyleAssignment))
+register(
+  "PRESENTATION_STYLE_ASSIGNMENT",
+  PresentationStyleAssignment.parse.bind(PresentationStyleAssignment),
+)

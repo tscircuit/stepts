@@ -17,4 +17,7 @@ export class SurfaceStyleFillArea extends Entity {
   }
 }
 
-register("SURFACE_STYLE_FILL_AREA", SurfaceStyleFillArea.parse.bind(SurfaceStyleFillArea))
+register(
+  "SURFACE_STYLE_FILL_AREA",
+  SurfaceStyleFillArea.parse.bind(SurfaceStyleFillArea),
+)

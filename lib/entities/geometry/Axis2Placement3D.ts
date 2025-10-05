@@ -12,7 +12,7 @@ export class Axis2Placement3D extends Entity {
     public name: string,
     public location: Ref<CartesianPoint>,
     public axis?: Ref<Direction>, // Z
-    public refDirection?: Ref<Direction> // X
+    public refDirection?: Ref<Direction>, // X
   ) {
     super()
   }

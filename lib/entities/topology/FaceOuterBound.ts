@@ -6,13 +6,16 @@ import type { EdgeLoop } from "./EdgeLoop"
 
 export class FaceOuterBound extends Entity {
   readonly type = "FACE_OUTER_BOUND"
-  constructor(public bound: Ref<EdgeLoop>, public sameSense: boolean) {
+  constructor(
+    public bound: Ref<EdgeLoop>,
+    public sameSense: boolean,
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {
     return new FaceOuterBound(
       ctx.parseRef<EdgeLoop>(a[0]),
-      a[1].trim() === ".T."
+      a[1].trim() === ".T.",
     )
   }
   toStep(): string {

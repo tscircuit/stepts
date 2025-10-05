@@ -7,7 +7,10 @@ import type { SurfaceStyleFillArea } from "./SurfaceStyleFillArea"
 
 export class SurfaceSideStyle extends Entity {
   readonly type = "SURFACE_SIDE_STYLE"
-  constructor(public name: string, public styles: Ref<SurfaceStyleFillArea>[]) {
+  constructor(
+    public name: string,
+    public styles: Ref<SurfaceStyleFillArea>[],
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {

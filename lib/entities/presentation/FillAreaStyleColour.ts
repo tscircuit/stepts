@@ -7,13 +7,16 @@ import type { ColourRgb } from "./ColourRgb"
 
 export class FillAreaStyleColour extends Entity {
   readonly type = "FILL_AREA_STYLE_COLOUR"
-  constructor(public name: string, public colour: Ref<ColourRgb>) {
+  constructor(
+    public name: string,
+    public colour: Ref<ColourRgb>,
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {
     return new FillAreaStyleColour(
       ctx.parseString(a[0]),
-      ctx.parseRef<ColourRgb>(a[1])
+      ctx.parseRef<ColourRgb>(a[1]),
     )
   }
   toStep(): string {
@@ -21,4 +24,7 @@ export class FillAreaStyleColour extends Entity {
   }
 }
 
-register("FILL_AREA_STYLE_COLOUR", FillAreaStyleColour.parse.bind(FillAreaStyleColour))
+register(
+  "FILL_AREA_STYLE_COLOUR",
+  FillAreaStyleColour.parse.bind(FillAreaStyleColour),
+)

@@ -10,7 +10,7 @@ export class FaceBound extends Entity {
   constructor(
     public name: string,
     public bound: Ref<EdgeLoop>,
-    public sameSense: boolean
+    public sameSense: boolean,
   ) {
     super()
   }
@@ -19,7 +19,7 @@ export class FaceBound extends Entity {
     return new FaceBound(
       name,
       ctx.parseRef<EdgeLoop>(a[1]),
-      a[2].trim() === ".T."
+      a[2].trim() === ".T.",
     )
   }
   toStep(): string {

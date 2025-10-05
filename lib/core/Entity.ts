@@ -1,5 +1,5 @@
-import type { Repository } from "./Repository"
 import type { ParseContext } from "./ParseContext"
+import type { Repository } from "./Repository"
 
 // Every entity supports parse + toStep
 export abstract class Entity {

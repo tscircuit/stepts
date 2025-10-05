@@ -1,6 +1,6 @@
 import type { Entity } from "./Entity"
-import type { Repository } from "./Repository"
 import type { Ref } from "./Ref"
+import type { Repository } from "./Repository"
 
 // Parse context: access to repo + token decoders
 export interface ParseContext {

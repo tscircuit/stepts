@@ -1,6 +1,6 @@
 import type { Entity } from "./Entity"
-import type { Repository } from "./Repository"
 import type { EntityId } from "./EntityId"
+import type { Repository } from "./Repository"
 
 // A typed reference to another entity (by #id) with lazy resolution.
 export class Ref<T extends Entity> {

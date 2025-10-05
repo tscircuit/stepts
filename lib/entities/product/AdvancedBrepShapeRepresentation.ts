@@ -10,7 +10,7 @@ export class AdvancedBrepShapeRepresentation extends Entity {
   constructor(
     public name: string,
     public items: Ref<Entity>[], // solids etc.
-    public context: Ref<Entity> // GEOMETRIC_REPRESENTATION_CONTEXT...
+    public context: Ref<Entity>, // GEOMETRIC_REPRESENTATION_CONTEXT...
   ) {
     super()
   }
@@ -33,5 +33,5 @@ export class AdvancedBrepShapeRepresentation extends Entity {
 
 register(
   "ADVANCED_BREP_SHAPE_REPRESENTATION",
-  AdvancedBrepShapeRepresentation.parse.bind(AdvancedBrepShapeRepresentation)
+  AdvancedBrepShapeRepresentation.parse.bind(AdvancedBrepShapeRepresentation),
 )

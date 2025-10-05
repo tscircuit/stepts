@@ -1,5 +1,4 @@
-import { test, expect } from "bun:test"
-import kicadoutput01 from "./kicadoutput01.step.txt" with { type: "text" }
+import { test } from "bun:test"
 
 test("kicadoutput01", () => {
   // TODO do testing

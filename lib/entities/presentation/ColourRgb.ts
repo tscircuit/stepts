@@ -10,7 +10,7 @@ export class ColourRgb extends Entity {
     public name: string,
     public r: number,
     public g: number,
-    public b: number
+    public b: number,
   ) {
     super()
   }
@@ -19,7 +19,7 @@ export class ColourRgb extends Entity {
       ctx.parseString(a[0]),
       ctx.parseNumber(a[1]),
       ctx.parseNumber(a[2]),
-      ctx.parseNumber(a[3])
+      ctx.parseNumber(a[3]),
     )
   }
   toStep(): string {

@@ -7,7 +7,10 @@ import type { Axis2Placement3D } from "./Axis2Placement3D"
 
 export class Circle extends Entity {
   readonly type = "CIRCLE"
-  constructor(public placement: Ref<Axis2Placement3D>, public radius: number) {
+  constructor(
+    public placement: Ref<Axis2Placement3D>,
+    public radius: number,
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {

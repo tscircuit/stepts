@@ -1,6 +1,6 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
-import { stepStr, fmtNum } from "../../core/stepFormat"
+import { fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 
 export class Direction extends Entity {
@@ -9,7 +9,7 @@ export class Direction extends Entity {
     public name: string,
     public dx: number,
     public dy: number,
-    public dz: number
+    public dz: number,
   ) {
     super()
   }
@@ -23,7 +23,7 @@ export class Direction extends Entity {
   }
   toStep(): string {
     return `DIRECTION(${stepStr(this.name)},(${fmtNum(this.dx)},${fmtNum(
-      this.dy
+      this.dy,
     )},${fmtNum(this.dz)}))`
   }
 }

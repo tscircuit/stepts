@@ -1,11 +1,11 @@
-import { Repository } from "../core/Repository"
-import { Ref } from "../core/Ref"
+import type { Entity } from "../core/Entity"
 import { eid } from "../core/EntityId"
 import type { ParseContext } from "../core/ParseContext"
-import type { Entity } from "../core/Entity"
-import { tokenizeSTEP } from "./tokenize"
-import { getParser } from "./registry"
+import { Ref } from "../core/Ref"
+import { Repository } from "../core/Repository"
 import { Unknown } from "../entities/Unknown"
+import { getParser } from "./registry"
+import { tokenizeSTEP } from "./tokenize"
 
 // Build a repo from raw STEP data
 export function parseRepository(data: string): Repository {
@@ -22,7 +22,7 @@ export function parseRepository(data: string): Repository {
     },
     parseString(tok: string) {
       const m = tok.match(/^'(.*)'$/)
-      if (!m) throw new Error("Expected string: " + tok)
+      if (!m) throw new Error(`Expected string: ${tok}`)
       return m[1].replace(/''/g, "'")
     },
   }

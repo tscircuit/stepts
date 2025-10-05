@@ -10,7 +10,7 @@ export class OrientedEdge extends Entity {
   constructor(
     public name: string,
     public edge: Ref<EdgeCurve>,
-    public orientation: boolean
+    public orientation: boolean,
   ) {
     super()
   }

@@ -10,7 +10,7 @@ export class StyledItem extends Entity {
   constructor(
     public name: string,
     public styles: Ref<PresentationStyleAssignment>[],
-    public item: Ref<Entity>
+    public item: Ref<Entity>,
   ) {
     super()
   }

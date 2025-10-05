@@ -7,7 +7,10 @@ import type { ClosedShell } from "./ClosedShell"
 
 export class ManifoldSolidBrep extends Entity {
   readonly type = "MANIFOLD_SOLID_BREP"
-  constructor(public name: string, public outer: Ref<ClosedShell>) {
+  constructor(
+    public name: string,
+    public outer: Ref<ClosedShell>,
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {

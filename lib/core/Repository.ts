@@ -1,7 +1,6 @@
 import type { Entity } from "./Entity"
-import type { EntityId } from "./EntityId"
-import { eid } from "./EntityId"
-import type { Ref } from "./Ref"
+import { type EntityId, eid } from "./EntityId"
+import { Ref } from "./Ref"
 import { stepStr } from "./stepFormat"
 
 // Repository manages ids, storage, and emission
@@ -9,17 +8,17 @@ export class Repository {
   private map = new Map<EntityId, Entity>()
   private order: EntityId[] = [] // insertion/emit order
   schema: "AP214" | "AP242" = "AP214"
-  units = { length: "MM", angle: "RAD" as "RAD", solidAngle: "SR" as "SR" }
+  units = { length: "MM", angle: "RAD" as const, solidAngle: "SR" as const }
 
   set(id: EntityId, e: Entity) {
     if (!this.map.has(id)) this.order.push(id)
     this.map.set(id, e)
   }
 
-  add(e: Entity): Ref<typeof e> {
+  add<T extends Entity>(e: T): Ref<T> {
     const id = eid(this.order.length ? Math.max(...this.order) + 1 : 1)
     this.set(id, e)
-    return new (require("./Ref").Ref)<typeof e>(id)
+    return new Ref<T>(id)
   }
 
   get(id: EntityId) {
@@ -38,7 +37,7 @@ export class Repository {
       "HEADER;",
       `FILE_DESCRIPTION((${stepStr(meta.name)}),'2;1');`,
       `FILE_NAME(${stepStr(meta.name)},${stepStr(now)},(${stepStr(
-        meta.author ?? "tscircuit"
+        meta.author ?? "tscircuit",
       )}),(${stepStr(meta.org ?? "tscircuit")}),${stepStr("generator")},${stepStr("")},${stepStr("")});`,
       `FILE_SCHEMA(('${
         this.schema === "AP214"

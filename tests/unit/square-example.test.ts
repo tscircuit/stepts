@@ -1,20 +1,20 @@
-import { test, expect } from "bun:test"
+import { expect, test } from "bun:test"
 import {
-  Repository,
-  CartesianPoint,
-  Direction,
+  AdvancedFace,
   Axis2Placement3D,
-  Plane,
-  VertexPoint,
-  Line,
+  CartesianPoint,
+  ClosedShell,
+  Direction,
   EdgeCurve,
-  OrientedEdge,
   EdgeLoop,
   FaceOuterBound,
-  AdvancedFace,
-  ClosedShell,
+  Line,
   ManifoldSolidBrep,
+  OrientedEdge,
+  Plane,
   type Ref,
+  Repository,
+  VertexPoint,
 } from "../../lib"
 
 test("create a square face", () => {
@@ -35,23 +35,23 @@ test("create a square face", () => {
     [10, 10, 0],
     [0, 10, 0],
   ].map(([x, y, z]) =>
-    repo.add(new VertexPoint(repo.add(new CartesianPoint("", x, y, z))))
+    repo.add(new VertexPoint(repo.add(new CartesianPoint("", x, y, z)))),
   )
 
   // Edges (lines)
   function edge(i: number, j: number): Ref<EdgeCurve> {
-    const p = v[i].resolve(repo).pnt,
-      q = v[j].resolve(repo).pnt
+    const p = v[i].resolve(repo).pnt
+    const q = v[j].resolve(repo).pnt
     const dir = repo.add(
       new Direction(
         "",
         q.resolve(repo).x - p.resolve(repo).x,
         q.resolve(repo).y - p.resolve(repo).y,
-        q.resolve(repo).z - p.resolve(repo).z
-      )
+        q.resolve(repo).z - p.resolve(repo).z,
+      ),
     )
     const line = repo.add(new Line(p, dir, 1)) // param length not used by many kernels
-    return repo.add(new EdgeCurve(v[i], v[j], line as any, true))
+    return repo.add(new EdgeCurve(v[i], v[j], line, true))
   }
 
   const ec = [edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 0)]

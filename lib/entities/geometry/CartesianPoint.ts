@@ -1,6 +1,6 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
-import { stepStr, fmtNum } from "../../core/stepFormat"
+import { fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 
 export class CartesianPoint extends Entity {
@@ -9,7 +9,7 @@ export class CartesianPoint extends Entity {
     public name: string,
     public x: number,
     public y: number,
-    public z: number
+    public z: number,
   ) {
     super()
   }
@@ -23,7 +23,7 @@ export class CartesianPoint extends Entity {
   }
   toStep(): string {
     return `CARTESIAN_POINT(${stepStr(this.name)},(${fmtNum(this.x)},${fmtNum(
-      this.y
+      this.y,
     )},${fmtNum(this.z)}))`
   }
 }

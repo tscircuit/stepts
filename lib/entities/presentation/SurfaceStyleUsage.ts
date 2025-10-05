@@ -8,14 +8,14 @@ export class SurfaceStyleUsage extends Entity {
   readonly type = "SURFACE_STYLE_USAGE"
   constructor(
     public side: ".BOTH." | ".POS." | ".NEG.",
-    public style: Ref<SurfaceSideStyle>
+    public style: Ref<SurfaceSideStyle>,
   ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {
     return new SurfaceStyleUsage(
       a[0].trim() as any,
-      ctx.parseRef<SurfaceSideStyle>(a[1])
+      ctx.parseRef<SurfaceSideStyle>(a[1]),
     )
   }
   toStep(): string {

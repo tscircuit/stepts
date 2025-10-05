@@ -2,15 +2,15 @@ import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
 import { register } from "../../parse/registry"
-import type { FaceOuterBound } from "./FaceOuterBound"
 import type { Plane } from "../geometry/Plane"
+import type { FaceOuterBound } from "./FaceOuterBound"
 
 export class AdvancedFace extends Entity {
   readonly type = "ADVANCED_FACE"
   constructor(
     public bounds: Ref<FaceOuterBound>[], // allow inner FACE_BOUND later
     public surface: Ref<Plane /*| other surfaces*/>,
-    public sameSense: boolean
+    public sameSense: boolean,
   ) {
     super()
   }

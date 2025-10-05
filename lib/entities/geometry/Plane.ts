@@ -7,13 +7,16 @@ import type { Axis2Placement3D } from "./Axis2Placement3D"
 
 export class Plane extends Entity {
   readonly type = "PLANE"
-  constructor(public name: string, public placement: Ref<Axis2Placement3D>) {
+  constructor(
+    public name: string,
+    public placement: Ref<Axis2Placement3D>,
+  ) {
     super()
   }
   static parse(a: string[], ctx: ParseContext) {
     return new Plane(
       ctx.parseString(a[0]),
-      ctx.parseRef<Axis2Placement3D>(a[1])
+      ctx.parseRef<Axis2Placement3D>(a[1]),
     )
   }
   toStep(): string {

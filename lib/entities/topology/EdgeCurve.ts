@@ -2,8 +2,8 @@ import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
 import { register } from "../../parse/registry"
-import type { VertexPoint } from "./VertexPoint"
 import type { Curve } from "../../types/geometry"
+import type { VertexPoint } from "./VertexPoint"
 
 export class EdgeCurve extends Entity {
   readonly type = "EDGE_CURVE"
@@ -11,7 +11,7 @@ export class EdgeCurve extends Entity {
     public start: Ref<VertexPoint>,
     public end: Ref<VertexPoint>,
     public curve: Ref<Curve>, // accepts Line or Circle ref
-    public sameSense: boolean
+    public sameSense: boolean,
   ) {
     super()
   }

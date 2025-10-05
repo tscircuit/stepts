@@ -11,7 +11,7 @@ export class Line extends Entity {
   constructor(
     public pnt: Ref<CartesianPoint>,
     public dir: Ref<Direction>,
-    public paramLen: number
+    public paramLen: number,
   ) {
     super()
   }
@@ -19,7 +19,7 @@ export class Line extends Entity {
     const p = ctx.parseRef<CartesianPoint>(a[0])
     // vector is VECTOR(DIRECTION,len) but many exporters inline a direction; we'll accept DIRECTION ref via VECTOR wrapper or direct
     const vecTok = a[1]
-    const m = vecTok.match(/^VECTOR\((#[0-9]+),([0-9Ee+.\-]+)\)$/)
+    const m = vecTok.match(/^VECTOR\((#[0-9]+),([0-9Ee+.-]+)\)$/)
     if (!m) throw new Error("Expected VECTOR(...) in LINE")
     const dir = ctx.parseRef<Direction>(m[1])
     const len = ctx.parseNumber(m[2])
