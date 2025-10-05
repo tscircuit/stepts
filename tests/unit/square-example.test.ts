@@ -14,6 +14,7 @@ import {
   Plane,
   type Ref,
   Repository,
+  Vector,
   VertexPoint,
 } from "../../lib"
 
@@ -50,7 +51,8 @@ test("create a square face", () => {
         q.resolve(repo).z - p.resolve(repo).z,
       ),
     )
-    const line = repo.add(new Line(p, dir, 1)) // param length not used by many kernels
+    const vec = repo.add(new Vector("", dir, 1))
+    const line = repo.add(new Line(p, vec))
     return repo.add(new EdgeCurve(v[i], v[j], line, true))
   }
 
