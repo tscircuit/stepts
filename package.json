@@ -1,8 +1,11 @@
 {
   "name": "stepts",
-  "module": "index.ts",
+  "module": "lib/index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "test": "bun test"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
     "@types/bun": "latest"
