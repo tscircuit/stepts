@@ -1,5 +1,10 @@
 This is a library for parsing, creating and serializing STEP files. It is used by higher-level libraries want to generate STEP files for various purposes.
 
+## Codebase Rules
+
+- One test per file
+- Use `bun` for testing and running scripts
+
 ## Structure
 
 ```
