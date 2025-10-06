@@ -7,6 +7,7 @@ import type { EdgeLoop } from "./EdgeLoop"
 export class FaceOuterBound extends Entity {
   readonly type = "FACE_OUTER_BOUND"
   constructor(
+    public name: string,
     public bound: Ref<EdgeLoop>,
     public sameSense: boolean,
   ) {
@@ -14,12 +15,13 @@ export class FaceOuterBound extends Entity {
   }
   static override parse(a: string[], ctx: ParseContext) {
     return new FaceOuterBound(
-      ctx.parseRef<EdgeLoop>(a[0]),
-      a[1].trim() === ".T.",
+      ctx.parseString(a[0]),
+      ctx.parseRef<EdgeLoop>(a[1]),
+      a[2].trim() === ".T.",
     )
   }
   override toStep(): string {
-    return `FACE_OUTER_BOUND(${this.bound},${this.sameSense ? ".T." : ".F."})`
+    return `FACE_OUTER_BOUND('${this.name}',${this.bound},${this.sameSense ? ".T." : ".F."})`
   }
 }
 

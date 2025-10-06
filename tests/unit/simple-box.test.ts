@@ -8,14 +8,19 @@ import {
   Axis2Placement3D,
   CartesianPoint,
   ClosedShell,
+  ColourRgb,
   Direction,
   EdgeCurve,
   EdgeLoop,
   FaceOuterBound,
+  FillAreaStyle,
+  FillAreaStyleColour,
   Line,
   ManifoldSolidBrep,
+  MechanicalDesignGeometricPresentationRepresentation,
   OrientedEdge,
   Plane,
+  PresentationStyleAssignment,
   Product,
   ProductContext,
   ProductDefinition,
@@ -25,12 +30,18 @@ import {
   type Ref,
   Repository,
   ShapeDefinitionRepresentation,
+  StyledItem,
+  SurfaceSideStyle,
+  SurfaceStyleFillArea,
+  SurfaceStyleUsage,
   Unknown,
   Vector,
   VertexPoint,
+  importStepWithOcct,
 } from "../../lib"
+import { readFileSync } from "node:fs"
 
-test("create a simple box", () => {
+test("create a simple box", async () => {
   const repo = new Repository()
 
   // Product structure (required for STEP validation)
@@ -156,7 +167,7 @@ test("create a simple box", () => {
   const bottomFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(bottomLoop, true))],
+      [repo.add(new FaceOuterBound("", bottomLoop, true))],
       bottomPlane,
       true,
     ),
@@ -177,7 +188,7 @@ test("create a simple box", () => {
   const topFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(topLoop, true))],
+      [repo.add(new FaceOuterBound("", topLoop, true))],
       topPlane,
       true,
     ),
@@ -204,7 +215,7 @@ test("create a simple box", () => {
   const frontFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(frontLoop, true))],
+      [repo.add(new FaceOuterBound("", frontLoop, true))],
       frontPlane,
       true,
     ),
@@ -225,7 +236,7 @@ test("create a simple box", () => {
   const backFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(backLoop, true))],
+      [repo.add(new FaceOuterBound("", backLoop, true))],
       backPlane,
       true,
     ),
@@ -252,7 +263,7 @@ test("create a simple box", () => {
   const leftFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(leftLoop, true))],
+      [repo.add(new FaceOuterBound("", leftLoop, true))],
       leftPlane,
       true,
     ),
@@ -273,7 +284,7 @@ test("create a simple box", () => {
   const rightFace = repo.add(
     new AdvancedFace(
       "",
-      [repo.add(new FaceOuterBound(rightLoop, true))],
+      [repo.add(new FaceOuterBound("", rightLoop, true))],
       rightPlane,
       true,
     ),
@@ -291,6 +302,25 @@ test("create a simple box", () => {
     ]),
   )
   const solid = repo.add(new ManifoldSolidBrep("SimpleBox", shell))
+
+  // Add presentation/styling (required by occt-import-js)
+  const color = repo.add(new ColourRgb("", 0.8, 0.8, 0.8))
+  const fillColor = repo.add(new FillAreaStyleColour("", color))
+  const fillStyle = repo.add(new FillAreaStyle("", [fillColor]))
+  const surfaceFill = repo.add(new SurfaceStyleFillArea(fillStyle))
+  const surfaceSide = repo.add(new SurfaceSideStyle("", [surfaceFill]))
+  const surfaceUsage = repo.add(new SurfaceStyleUsage(".BOTH.", surfaceSide))
+  const presStyle = repo.add(new PresentationStyleAssignment([surfaceUsage]))
+  const styledItem = repo.add(new StyledItem("", [presStyle], solid))
+
+  // Add mechanical design presentation representation
+  repo.add(
+    new MechanicalDesignGeometricPresentationRepresentation(
+      "",
+      [styledItem],
+      geomContext,
+    ),
+  )
 
   // Shape representation
   const shapeRep = repo.add(
@@ -312,13 +342,15 @@ test("create a simple box", () => {
   expect(stepText).toContain("MANIFOLD_SOLID_BREP")
   expect(stepText).toContain("END-ISO-10303-21")
 
-  // NOTE: occt-import-js 0.0.23 has a bug parsing complex entity syntax
-  // (multi-inheritance entities in parentheses). The generated file is valid
-  // STEP AP214 and can be opened in CAD software, but cannot be validated
-  // programmatically with this version of occt-import-js.
-  // See fixture file tests/fixtures/simple-box.step for a compatible format.
+  // Validate with occt-import-js
+  console.log("Validating with occt-import-js...")
+  const stepData = readFileSync(outputPath)
+  const result = await importStepWithOcct(stepData)
 
-  console.log("✓ STEP file generated with complete product structure")
-  console.log("  File can be opened in CAD software (SolidWorks, FreeCAD, etc.)")
-  console.log("  Note: occt-import-js 0.0.23 has parsing limitations with this format")
+  expect(result.success).toBe(true)
+  expect(result.meshes.length).toBeGreaterThan(0)
+
+  console.log("✓ STEP file validated successfully with occt-import-js")
+  console.log(`  - Meshes: ${result.meshes.length}`)
+  console.log(`  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`)
 })

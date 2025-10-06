@@ -59,7 +59,7 @@ test("create a square face", () => {
   const ec = [edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 0)]
   const oe = ec.map((e) => repo.add(new OrientedEdge("", e, true)))
   const loop = repo.add(new EdgeLoop("", oe))
-  const fob = repo.add(new FaceOuterBound(loop, true))
+  const fob = repo.add(new FaceOuterBound("", loop, true))
   const face = repo.add(new AdvancedFace("", [fob], plane, true))
   const shell = repo.add(new ClosedShell("", [face]))
   repo.add(new ManifoldSolidBrep("", shell))

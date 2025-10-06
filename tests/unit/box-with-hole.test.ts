@@ -287,7 +287,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       bottomOuterEdges.map((e) => repo.add(new OrientedEdge("", e, true))),
     ),
   )
-  const bottomOuterBound = repo.add(new FaceOuterBound(bottomOuterLoop, true))
+  const bottomOuterBound = repo.add(new FaceOuterBound("", bottomOuterLoop, true))
 
   const bottomInnerLoop = repo.add(
     new EdgeLoop("", [repo.add(new OrientedEdge("", bottomHoleEdge, false))]), // reversed for inner
@@ -310,7 +310,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       topOuterEdges.map((e) => repo.add(new OrientedEdge("", e, false))), // reversed
     ),
   )
-  const topOuterBound = repo.add(new FaceOuterBound(topOuterLoop, true))
+  const topOuterBound = repo.add(new FaceOuterBound("", topOuterLoop, true))
 
   const topInnerLoop = repo.add(
     new EdgeLoop("", [repo.add(new OrientedEdge("", topHoleEdge, true))]),
@@ -335,7 +335,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       repo.add(new OrientedEdge("", boxVerticalEdges[0], false)),
     ]),
   )
-  const frontBound = repo.add(new FaceOuterBound(frontLoop, true))
+  const frontBound = repo.add(new FaceOuterBound("", frontLoop, true))
   const frontFace = repo.add(new AdvancedFace("", [frontBound], frontPlane, true))
 
   // Build Right Face (x=boxWidth)
@@ -347,7 +347,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       repo.add(new OrientedEdge("", boxVerticalEdges[1], false)),
     ]),
   )
-  const rightBound = repo.add(new FaceOuterBound(rightLoop, true))
+  const rightBound = repo.add(new FaceOuterBound("", rightLoop, true))
   const rightFace = repo.add(new AdvancedFace("", [rightBound], rightPlane, true))
 
   // Build Back Face (y=boxDepth)
@@ -359,7 +359,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       repo.add(new OrientedEdge("", boxVerticalEdges[2], false)),
     ]),
   )
-  const backBound = repo.add(new FaceOuterBound(backLoop, true))
+  const backBound = repo.add(new FaceOuterBound("", backLoop, true))
   const backFace = repo.add(new AdvancedFace("", [backBound], backPlane, true))
 
   // Build Left Face (x=0)
@@ -371,7 +371,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       repo.add(new OrientedEdge("", boxVerticalEdges[3], false)),
     ]),
   )
-  const leftBound = repo.add(new FaceOuterBound(leftLoop, true))
+  const leftBound = repo.add(new FaceOuterBound("", leftLoop, true))
   const leftFace = repo.add(new AdvancedFace("", [leftBound], leftPlane, true))
 
   // Build Cylindrical Hole Face (simple 4-edge loop)
@@ -384,7 +384,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       repo.add(new OrientedEdge("", holeVerticalEdge, false)),
     ]),
   )
-  const cylinderBound = repo.add(new FaceOuterBound(cylinderLoop, true))
+  const cylinderBound = repo.add(new FaceOuterBound("", cylinderLoop, true))
   const cylinderFace = repo.add(
     new AdvancedFace("", [cylinderBound], cylinderSurface, false),
   )
