@@ -168,6 +168,77 @@ console.log(resolvedPoint.x, resolvedPoint.y, resolvedPoint.z)
 
 You can validate STEP files using third-party tools like `occt-import-js`. This library focuses on parsing, creating, and serializing STEP files, while validation can be performed by external CAD kernels.
 
+## Entity Classes Reference
+
+### Geometry Entities
+
+| Entity | Description |
+|--------|-------------|
+| [`CartesianPoint`](lib/entities/geometry/CartesianPoint.ts) | 3D point with x, y, z coordinates |
+| [`Direction`](lib/entities/geometry/Direction.ts) | 3D direction vector with dx, dy, dz components |
+| [`Vector`](lib/entities/geometry/Vector.ts) | Direction with magnitude |
+| [`Line`](lib/entities/geometry/Line.ts) | Infinite line defined by point and direction vector |
+| [`Circle`](lib/entities/geometry/Circle.ts) | Circular curve defined by placement and radius |
+| [`Plane`](lib/entities/geometry/Plane.ts) | Planar surface defined by axis placement |
+| [`CylindricalSurface`](lib/entities/geometry/CylindricalSurface.ts) | Cylindrical surface with position and radius |
+| [`ToroidalSurface`](lib/entities/geometry/ToroidalSurface.ts) | Toroidal (torus/donut) surface with major and minor radii |
+| [`Axis2Placement3D`](lib/entities/geometry/Axis2Placement3D.ts) | 3D coordinate system placement with location and axes |
+| [`TrimmedCurve`](lib/entities/geometry/TrimmedCurve.ts) | Curve segment trimmed between two points |
+
+### Topology Entities
+
+| Entity | Description |
+|--------|-------------|
+| [`VertexPoint`](lib/entities/topology/VertexPoint.ts) | Topological vertex referencing a geometric point |
+| [`EdgeCurve`](lib/entities/topology/EdgeCurve.ts) | Edge defined by start/end vertices and curve geometry |
+| [`OrientedEdge`](lib/entities/topology/OrientedEdge.ts) | Edge with orientation flag for use in loops |
+| [`EdgeLoop`](lib/entities/topology/EdgeLoop.ts) | Closed loop of oriented edges |
+| [`FaceBound`](lib/entities/topology/FaceBound.ts) | Inner boundary of a face |
+| [`FaceOuterBound`](lib/entities/topology/FaceOuterBound.ts) | Outer boundary of a face |
+| [`AdvancedFace`](lib/entities/topology/AdvancedFace.ts) | Face with surface geometry and boundaries |
+| [`ClosedShell`](lib/entities/topology/ClosedShell.ts) | Closed shell composed of faces |
+| [`ManifoldSolidBrep`](lib/entities/topology/ManifoldSolidBrep.ts) | Solid boundary representation with closed shell |
+
+### Product Structure Entities
+
+| Entity | Description |
+|--------|-------------|
+| [`Product`](lib/entities/product/Product.ts) | Product definition with id, name, and description |
+| [`ProductContext`](lib/entities/product/ProductContext.ts) | Product context with discipline type |
+| [`ProductDefinition`](lib/entities/product/ProductDefinition.ts) | Specific product version |
+| [`ProductDefinitionFormation`](lib/entities/product/ProductDefinitionFormation.ts) | Product version formation |
+| [`ProductDefinitionShape`](lib/entities/product/ProductDefinitionShape.ts) | Shape aspect of product definition |
+| [`ProductDefinitionContext`](lib/entities/product/ProductDefinitionContext.ts) | Product definition context with lifecycle stage |
+| [`ShapeRepresentation`](lib/entities/product/ShapeRepresentation.ts) | Shape representation with geometric items |
+| [`ShapeDefinitionRepresentation`](lib/entities/product/ShapeDefinitionRepresentation.ts) | Links shape definition to representation |
+| [`AdvancedBrepShapeRepresentation`](lib/entities/product/AdvancedBrepShapeRepresentation.ts) | B-rep shape representation container |
+| [`ApplicationContext`](lib/entities/product/ApplicationContext.ts) | Application context |
+| [`ApplicationProtocolDefinition`](lib/entities/product/ApplicationProtocolDefinition.ts) | Application protocol (e.g., AP214, AP242) definition |
+| [`ProductRelatedProductCategory`](lib/entities/product/ProductRelatedProductCategory.ts) | Product category classification |
+| [`NextAssemblyUsageOccurrence`](lib/entities/product/NextAssemblyUsageOccurrence.ts) | Assembly relationship between products |
+| [`ContextDependentShapeRepresentation`](lib/entities/product/ContextDependentShapeRepresentation.ts) | Context-dependent shape representation for assemblies |
+| [`ItemDefinedTransformation`](lib/entities/product/ItemDefinedTransformation.ts) | Geometric transformation between placements |
+
+### Presentation Entities
+
+| Entity | Description |
+|--------|-------------|
+| [`ColourRgb`](lib/entities/presentation/ColourRgb.ts) | RGB color definition with red, green, blue values |
+| [`FillAreaStyleColour`](lib/entities/presentation/FillAreaStyleColour.ts) | Fill area color style |
+| [`FillAreaStyle`](lib/entities/presentation/FillAreaStyle.ts) | Fill area style with color styling |
+| [`SurfaceStyleFillArea`](lib/entities/presentation/SurfaceStyleFillArea.ts) | Surface fill area style |
+| [`SurfaceSideStyle`](lib/entities/presentation/SurfaceSideStyle.ts) | Surface side styling |
+| [`SurfaceStyleUsage`](lib/entities/presentation/SurfaceStyleUsage.ts) | Surface style usage with side specification |
+| [`PresentationStyleAssignment`](lib/entities/presentation/PresentationStyleAssignment.ts) | Assignment of presentation styles to geometry |
+| [`StyledItem`](lib/entities/presentation/StyledItem.ts) | Styled item linking geometry to style |
+| [`MechanicalDesignGeometricPresentationRepresentation`](lib/entities/presentation/MechanicalDesignGeometricPresentationRepresentation.ts) | Mechanical design presentation representation |
+
+### Other Entities
+
+| Entity | Description |
+|--------|-------------|
+| [`Unknown`](lib/entities/Unknown.ts) | Passthrough for unsupported or complex multi-inheritance entities |
+
 ## API Reference
 
 ### Repository Methods
