@@ -36,3 +36,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .vscode
 debug-output
 *-roundtrip.step.txt
+
+# Python
+.venv
+__pycache__
+*.pyc
