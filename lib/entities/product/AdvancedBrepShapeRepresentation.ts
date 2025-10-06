@@ -14,7 +14,7 @@ export class AdvancedBrepShapeRepresentation extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     const items = a[1]
       .replace(/^\(|\)$/g, "")
@@ -24,7 +24,7 @@ export class AdvancedBrepShapeRepresentation extends Entity {
     const c = ctx.parseRef<Entity>(a[2])
     return new AdvancedBrepShapeRepresentation(name, items, c)
   }
-  toStep(): string {
+  override toStep(): string {
     return `ADVANCED_BREP_SHAPE_REPRESENTATION(${
       stepStr(this.name)
     },(${this.items.join(",")}),${this.context})`

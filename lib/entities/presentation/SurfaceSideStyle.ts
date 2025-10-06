@@ -13,7 +13,7 @@ export class SurfaceSideStyle extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const list = a[1]
       .replace(/^\(|\)$/g, "")
       .split(",")
@@ -21,7 +21,7 @@ export class SurfaceSideStyle extends Entity {
       .map((tok) => ctx.parseRef<SurfaceStyleFillArea>(tok))
     return new SurfaceSideStyle(a[0] === "$" ? "" : ctx.parseString(a[0]), list)
   }
-  toStep(): string {
+  override toStep(): string {
     return `SURFACE_SIDE_STYLE(${
       stepStr(this.name)
     },(${this.styles.join(",")}))`

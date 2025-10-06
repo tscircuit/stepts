@@ -14,7 +14,7 @@ export class FaceBound extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     return new FaceBound(
       name,
@@ -22,7 +22,7 @@ export class FaceBound extends Entity {
       a[2].trim() === ".T.",
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `FACE_BOUND(${stepStr(this.name)},${this.bound},${
       this.sameSense ? ".T." : ".F."
     })`

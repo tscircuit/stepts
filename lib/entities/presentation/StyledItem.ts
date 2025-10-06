@@ -14,7 +14,7 @@ export class StyledItem extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     const styles = a[1]
       .replace(/^\(|\)$/g, "")
@@ -24,7 +24,7 @@ export class StyledItem extends Entity {
     const item = ctx.parseRef<Entity>(a[2])
     return new StyledItem(name, styles, item)
   }
-  toStep(): string {
+  override toStep(): string {
     return `STYLED_ITEM(${
       stepStr(this.name)
     },(${this.styles.join(",")}),${this.item})`

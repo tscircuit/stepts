@@ -9,10 +9,10 @@ export class SurfaceStyleFillArea extends Entity {
   constructor(public style: Ref<FillAreaStyle>) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new SurfaceStyleFillArea(ctx.parseRef<FillAreaStyle>(a[0]))
   }
-  toStep(): string {
+  override toStep(): string {
     return `SURFACE_STYLE_FILL_AREA(${this.style})`
   }
 }

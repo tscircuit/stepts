@@ -36,7 +36,7 @@ test("create a square face", () => {
     [10, 10, 0],
     [0, 10, 0],
   ].map(([x, y, z]) =>
-    repo.add(new VertexPoint(repo.add(new CartesianPoint("", x, y, z)))),
+    repo.add(new VertexPoint("", repo.add(new CartesianPoint("", x, y, z)))),
   )
 
   // Edges (lines)
@@ -52,16 +52,16 @@ test("create a square face", () => {
       ),
     )
     const vec = repo.add(new Vector("", dir, 1))
-    const line = repo.add(new Line(p, vec))
-    return repo.add(new EdgeCurve(v[i], v[j], line, true))
+    const line = repo.add(new Line("", p, vec))
+    return repo.add(new EdgeCurve("", v[i], v[j], line, true))
   }
 
   const ec = [edge(0, 1), edge(1, 2), edge(2, 3), edge(3, 0)]
   const oe = ec.map((e) => repo.add(new OrientedEdge("", e, true)))
   const loop = repo.add(new EdgeLoop("", oe))
   const fob = repo.add(new FaceOuterBound(loop, true))
-  const face = repo.add(new AdvancedFace([fob], plane, true))
-  const shell = repo.add(new ClosedShell([face]))
+  const face = repo.add(new AdvancedFace("", [fob], plane, true))
+  const shell = repo.add(new ClosedShell("", [face]))
   repo.add(new ManifoldSolidBrep("", shell))
 
   // Emit STEP text

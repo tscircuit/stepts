@@ -13,7 +13,7 @@ export class CartesianPoint extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = ctx.parseString(a[0])
     const coords = a[1]
       .replace(/^\(|\)$/g, "")
@@ -21,7 +21,7 @@ export class CartesianPoint extends Entity {
       .map(ctx.parseNumber)
     return new CartesianPoint(name, coords[0], coords[1], coords[2] ?? 0)
   }
-  toStep(): string {
+  override toStep(): string {
     return `CARTESIAN_POINT(${stepStr(this.name)},(${fmtNum(this.x)},${fmtNum(
       this.y,
     )},${fmtNum(this.z)}))`

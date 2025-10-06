@@ -13,11 +13,11 @@ export class ManifoldSolidBrep extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     return new ManifoldSolidBrep(name, ctx.parseRef<ClosedShell>(a[1]))
   }
-  toStep(): string {
+  override toStep(): string {
     return `MANIFOLD_SOLID_BREP(${stepStr(this.name)},${
       this.outer
     })`

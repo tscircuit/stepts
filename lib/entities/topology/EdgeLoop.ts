@@ -13,7 +13,7 @@ export class EdgeLoop extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     const list = a[1]
       .replace(/^\(|\)$/g, "")
@@ -22,7 +22,7 @@ export class EdgeLoop extends Entity {
       .map((tok) => ctx.parseRef<OrientedEdge>(tok))
     return new EdgeLoop(name, list)
   }
-  toStep(): string {
+  override toStep(): string {
     return `EDGE_LOOP(${
       stepStr(this.name)
     },(${this.edges.join(",")}))`
