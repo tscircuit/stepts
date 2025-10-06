@@ -26,7 +26,9 @@ test("kicadoutput01 - parse and round-trip", () => {
   // Check Unknown entities (complex multi-inheritance entities like GEOMETRIC_REPRESENTATION_CONTEXT)
   const unknownCount1 = typeCounts1.get("Unknown") || 0
   console.log(`Unknown entities in original: ${unknownCount1}`)
-  console.log(`  (These are complex multi-inheritance entities that are preserved for round-trip)`)
+  console.log(
+    `  (These are complex multi-inheritance entities that are preserved for round-trip)`,
+  )
 
   // Verify we have all expected major entity types
   expect(typeCounts1.get("CARTESIAN_POINT")).toBeGreaterThan(0)
@@ -45,7 +47,7 @@ test("kicadoutput01 - parse and round-trip", () => {
 
   // Save the serialized output for inspection
   writeFileSync(
-    "tests/roundtrip/kicadoutput01/kicadoutput01-roundtrip.step.txt",
+    "tests/roundtrip/kicadoutput01/kicadoutput01-roundtrip.step",
     serialized,
   )
   writeFileSync("debug-output/kicadoutput1.step", serialized)
