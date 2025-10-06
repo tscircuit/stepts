@@ -1,4 +1,5 @@
-import { writeFileSync } from "node:fs"
+import { mkdirSync, writeFileSync } from "node:fs"
+import { fileURLToPath } from "node:url"
 import { expect, test } from "bun:test"
 import {
   AdvancedBrepShapeRepresentation,
@@ -347,7 +348,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       ),
     ),
   )
-  const bottomInnerBound = repo.add(new FaceBound("", bottomInnerLoop, true))
+  const bottomInnerBound = repo.add(new FaceBound("", bottomInnerLoop, false))
 
   const bottomFace = repo.add(
     new AdvancedFace(
@@ -362,7 +363,7 @@ test("create a rectangular prism with cylindrical hole", () => {
   const topOuterLoop = repo.add(
     new EdgeLoop(
       "",
-      topOuterEdges.map((e) => repo.add(new OrientedEdge("", e, false))), // reversed
+      topOuterEdges.map((e) => repo.add(new OrientedEdge("", e, true))),
     ),
   )
   const topOuterBound = repo.add(new FaceOuterBound(topOuterLoop, true))
@@ -373,7 +374,7 @@ test("create a rectangular prism with cylindrical hole", () => {
       topHoleEdges.map((edge) => repo.add(new OrientedEdge("", edge, false))),
     ),
   )
-  const topInnerBound = repo.add(new FaceBound("", topInnerLoop, true))
+  const topInnerBound = repo.add(new FaceBound("", topInnerLoop, false))
 
   const topFace = repo.add(
     new AdvancedFace(
@@ -497,10 +498,10 @@ test("create a rectangular prism with cylindrical hole", () => {
   const stepText = repo.toPartFile({ name: "box-with-hole" })
 
   // Write to debug-output
-  writeFileSync(
-    "/Users/seve/w/tsc/stepts/debug-output/box-with-hole.step",
-    stepText,
-  )
+  const outputDirUrl = new URL("../../debug-output/", import.meta.url)
+  mkdirSync(fileURLToPath(outputDirUrl), { recursive: true })
+  const outputFileUrl = new URL("box-with-hole.step", outputDirUrl)
+  writeFileSync(outputFileUrl, stepText)
 
   console.log("STEP file written to debug-output/box-with-hole.step")
 
