@@ -10,124 +10,279 @@ A strongly-typed TypeScript library for parsing, creating, and serializing STEP 
 - **Discriminated unions** for entity families (e.g., `Curve`, `Surface`)
 - **Unknown entity passthrough** for round-trip compatibility
 - **Support for AP214 and AP242** schemas
+- **Geometry & Topology**: Points, lines, circles, planes, cylindrical surfaces, edges, faces, solids
+- **Product Structure**: Complete product definition hierarchy
+- **Presentation**: Colors and styling for faces
 
 ## Installation
 
 ```bash
-bun install
+npm install stepts
+# or
+bun add stepts
 ```
 
-## Usage
+## Quick Start
 
-### Creating a STEP file
+### Creating a Simple Box
 
 ```typescript
-import {
-  Repository,
-  CartesianPoint,
-  Direction,
-  Axis2Placement3D,
-  Plane,
-  VertexPoint,
-  Line,
-  EdgeCurve,
-  OrientedEdge,
-  EdgeLoop,
-  FaceOuterBound,
-  AdvancedFace,
-  ClosedShell,
-  ManifoldSolidBrep,
-} from "stepts"
+import { Repository, CartesianPoint, ManifoldSolidBrep } from "stepts"
 
-// Create a repository to manage entities
 const repo = new Repository()
 
-// Build geometry: a planar square face
-const p0 = repo.add(new CartesianPoint("", 0, 0, 0))
-const dz = repo.add(new Direction("", 0, 0, 1))
-const dx = repo.add(new Direction("", 1, 0, 0))
-const frame = repo.add(new Axis2Placement3D("", p0, dz, dx))
-const plane = repo.add(new Plane("", frame))
-
-// Add vertices
-const v = [
+// Create vertices for a box
+const vertices = [
   [0, 0, 0],
   [10, 0, 0],
   [10, 10, 0],
-  [0, 10, 0],
+  [0, 10, 0], // bottom
+  [0, 0, 10],
+  [10, 0, 10],
+  [10, 10, 10],
+  [0, 10, 10], // top
 ].map(([x, y, z]) =>
-  repo.add(new VertexPoint(repo.add(new CartesianPoint("", x, y, z))))
+  repo.add(new VertexPoint("", repo.add(new CartesianPoint("", x, y, z))))
 )
 
-// Create edges and build topology...
-// (See tests/unit/square-example.test.ts for complete example)
+// Create edges, faces, shell, and solid...
+// (See tests/unit/simple-box.test.ts for complete example)
 
-// Emit STEP file
-const stepText = repo.toPartFile({
-  name: "square",
-  author: "Your Name",
-  org: "Your Organization"
-})
-
-console.log(stepText)
+// Export to STEP format
+const stepText = repo.toPartFile({ name: "my-box" })
 ```
 
-### Parsing a STEP file
+### Parsing a STEP File
+
+```typescript
+import { parseRepository } from "stepts"
+import { readFileSync } from "fs"
+
+// Load and parse
+const stepContent = readFileSync("model.step", "utf-8")
+const repo = parseRepository(stepContent)
+
+// Access entities
+for (const [id, entity] of repo.entries()) {
+  if (entity.type === "CARTESIAN_POINT") {
+    console.log(`Point #${id}:`, entity.x, entity.y, entity.z)
+  }
+}
+
+// Re-export
+const newStepText = repo.toPartFile({ name: "modified-model" })
+```
+
+## Core Concepts
+
+### Repository
+
+The `Repository` manages all entities and their relationships:
+
+```typescript
+const repo = new Repository()
+
+// Add entities
+const point = repo.add(new CartesianPoint("", 0, 0, 0))
+const direction = repo.add(new Direction("", 0, 0, 1))
+
+// Reference entities
+const entity = repo.get(eid(1))
+const allEntities = repo.entries()
+
+// Export to STEP
+const stepText = repo.toPartFile({
+  name: "part-name",
+  author: "Author Name",
+  org: "Organization",
+})
+```
+
+### Type-Safe References
+
+Use `Ref<T>` for type-safe entity references:
+
+```typescript
+import type { Ref } from "stepts"
+
+const point: Ref<CartesianPoint> = repo.add(new CartesianPoint("", 5, 5, 5))
+const vertex = repo.add(new VertexPoint("", point))
+
+// Resolve references
+const resolvedPoint = point.resolve(repo)
+console.log(resolvedPoint.x, resolvedPoint.y, resolvedPoint.z)
+```
+
+### Entity Types
+
+#### Geometry
+
+- `CartesianPoint` - 3D point
+- `Direction` - 3D direction vector
+- `Vector` - Direction with magnitude
+- `Line` - Infinite line
+- `Circle` - Circular curve
+- `Plane` - Planar surface
+- `CylindricalSurface` - Cylindrical surface
+- `Axis2Placement3D` - Coordinate system placement
+
+#### Topology
+
+- `VertexPoint` - Topological vertex
+- `EdgeCurve` - Edge defined by curve
+- `OrientedEdge` - Edge with orientation
+- `EdgeLoop` - Closed loop of edges
+- `FaceOuterBound` / `FaceBound` - Face boundaries
+- `AdvancedFace` - Face with surface geometry
+- `ClosedShell` - Closed shell of faces
+- `ManifoldSolidBrep` - Solid B-rep
+
+#### Product Structure
+
+- `Product` - Product definition
+- `ProductDefinition` - Specific product version
+- `ProductDefinitionShape` - Shape aspect of product
+- `AdvancedBrepShapeRepresentation` - Shape representation
+- `ApplicationContext` - Application context
+
+#### Presentation
+
+- `ColourRgb` - RGB color
+- `StyledItem` - Styling for geometry
+- `SurfaceStyleFillArea` - Surface fill styling
+
+## Examples
+
+### Box with Square Hole
+
+```typescript
+// Create a 20x20x20 box with a 6x6 square hole through it
+// See: tests/unit/box-with-square-hole.test.ts
+```
+
+### Box with Circular Hole
+
+```typescript
+// Create a 20x20x20 box with a circular hole (radius 3) through it
+// Uses Circle and CylindricalSurface
+// See: tests/unit/box-with-circular-hole.test.ts
+```
+
+### Parsing and Round-Trip
+
+```typescript
+// Parse existing STEP file, modify, and re-export
+// Preserves unknown entities for compatibility
+// See: tests/roundtrip/kicadoutput01/kicadoutput01.test.ts
+```
+
+## Validation
+
+Validate your STEP files with `occt-import-js`:
+
+```typescript
+import { importStepWithOcct } from "stepts"
+import { readFileSync } from "fs"
+
+const stepData = readFileSync("output.step")
+const result = await importStepWithOcct(stepData)
+
+if (result.success) {
+  console.log(`✓ Valid STEP file`)
+  console.log(`  - Meshes: ${result.meshes.length}`)
+  console.log(
+    `  - Triangles: ${result.meshes.reduce(
+      (sum, m) => sum + m.index.array.length / 3,
+      0
+    )}`
+  )
+} else {
+  console.error("Invalid STEP file")
+}
+```
+
+## API Reference
+
+### Repository Methods
+
+```typescript
+// Entity management
+repo.add(entity: Entity): Ref<Entity>
+repo.get(id: EntityId): Entity | undefined
+repo.entries(): [EntityId, Entity][]
+
+// Export to STEP
+repo.toPartFile(options: {
+  name: string
+  author?: string
+  org?: string
+  description?: string
+}): string
+```
+
+### Parsing
 
 ```typescript
 import { parseRepository } from "stepts"
 
-const stepFileContent = `
-ISO-10303-21;
-HEADER;
-...
-DATA;
-#1 = CARTESIAN_POINT('',(0.,0.,0.));
-...
-ENDSEC;
-END-ISO-10303-21;
-`
-
-const repo = parseRepository(stepFileContent)
-
-// Access entities by ID
-const point = repo.get(eid(1))
-
-// Iterate all entities
-for (const [id, entity] of repo.entries()) {
-  console.log(`#${id} = ${entity.type}`)
-}
+// Parse STEP file content
+parseRepository(stepText: string): Repository
 ```
 
 ## Testing
+
+Run the test suite:
 
 ```bash
 bun test
 ```
 
-## Structure
+Run specific tests:
 
-```
-stepts/
-├─ lib/
-│  ├─ core/                 # Framework for IDs, refs, repo, utils
-│  ├─ io/                   # File-level concerns
-│  ├─ parse/                # Entity registry and parsing
-│  ├─ types/                # Shared types & discriminated unions
-│  ├─ entities/             # STEP entity classes
-│  │  ├─ geometry/          # CartesianPoint, Direction, Line, Circle, etc.
-│  │  ├─ topology/          # VertexPoint, EdgeCurve, AdvancedFace, etc.
-│  │  ├─ product/           # Product structure entities
-│  │  └─ presentation/      # Color and styling entities
-│  └─ index.ts              # Public API
-└─ tests/
-   └─ unit/                 # Unit tests
+```bash
+bun test tests/unit/simple-box.test.ts
+bun test tests/unit/box-with-circular-hole.test.ts
 ```
 
-## License
+## Advanced Usage
 
-Private
+### Custom Entity Creation
 
-## Development
+```typescript
+import { Entity } from "stepts"
+import type { ParseContext } from "stepts"
 
-This project was created using `bun init` and uses [Bun](https://bun.com) as its runtime.
+class MyCustomEntity extends Entity {
+  readonly type = "MY_CUSTOM_ENTITY"
+
+  constructor(public name: string, public value: number) {
+    super()
+  }
+
+  toStep(): string {
+    return `MY_CUSTOM_ENTITY('${this.name}',${this.value})`
+  }
+
+  static parse(args: string[], ctx: ParseContext) {
+    return new MyCustomEntity(
+      ctx.parseString(args[0]),
+      ctx.parseNumber(args[1])
+    )
+  }
+}
+```
+
+### Working with Unknown Entities
+
+For complex multi-inheritance entities or unsupported entity types, use `Unknown`:
+
+```typescript
+import { Unknown } from "stepts"
+
+// Preserve complex entity during round-trip
+const geomContext = repo.add(
+  new Unknown("", [
+    `( GEOMETRIC_REPRESENTATION_CONTEXT(3) GLOBAL_UNCERTAINTY_ASSIGNED_CONTEXT((...)) REPRESENTATION_CONTEXT('name','3D') )`,
+  ])
+)
+```

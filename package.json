@@ -2,15 +2,19 @@
   "name": "stepts",
   "module": "lib/index.ts",
   "type": "module",
-  "private": true,
+  "license": "MIT",
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "build": "tsup-node lib/index.ts --format esm --dts",
+    "format": "biome format --write .",
+    "format:check": "biome format ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
     "@types/bun": "latest",
     "looks-same": "^10.0.1",
-    "occt-import-js": "^0.0.23"
+    "occt-import-js": "^0.0.23",
+    "tsup": "^8.5.0"
   },
   "peerDependencies": {
     "typescript": "^5"
