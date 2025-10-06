@@ -2,18 +2,6 @@
 
 A strongly-typed TypeScript library for parsing, creating, and serializing STEP (ISO 10303-21) files. This library provides a class-based, type-safe approach to working with STEP entities, making it easy for higher-level libraries to generate STEP files for CAD and 3D modeling purposes.
 
-## Features
-
-- **Type-safe references** (`Ref<T>`) with lazy resolution
-- **Round-trippable entities** (`static parse(...)` and `toStep()`)
-- **Repository pattern** to manage IDs, inter-entity links, and emission order
-- **Discriminated unions** for entity families (e.g., `Curve`, `Surface`)
-- **Unknown entity passthrough** for round-trip compatibility
-- **Support for AP214 and AP242** schemas
-- **Geometry & Topology**: Points, lines, circles, planes, cylindrical surfaces, edges, faces, solids
-- **Product Structure**: Complete product definition hierarchy
-- **Presentation**: Colors and styling for faces
-
 ## Installation
 
 ```bash
