@@ -23,7 +23,7 @@ export class SurfaceSideStyle extends Entity {
   }
   toStep(): string {
     return `SURFACE_SIDE_STYLE(${
-      this.name ? stepStr(this.name) : "$"
+      stepStr(this.name)
     },(${this.styles.join(",")}))`
   }
 }

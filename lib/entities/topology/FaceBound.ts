@@ -23,7 +23,7 @@ export class FaceBound extends Entity {
     )
   }
   toStep(): string {
-    return `FACE_BOUND(${this.name ? stepStr(this.name) : "$"},${this.bound},${
+    return `FACE_BOUND(${stepStr(this.name)},${this.bound},${
       this.sameSense ? ".T." : ".F."
     })`
   }

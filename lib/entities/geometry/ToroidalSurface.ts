@@ -23,7 +23,7 @@ export class ToroidalSurface extends Entity {
     return new ToroidalSurface(name, position, majorRadius, minorRadius)
   }
   toStep(): string {
-    return `TOROIDAL_SURFACE(${this.name ? stepStr(this.name) : "$"},${
+    return `TOROIDAL_SURFACE(${stepStr(this.name)},${
       this.position
     },${fmtNum(this.majorRadius)},${fmtNum(this.minorRadius)})`
   }

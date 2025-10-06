@@ -41,7 +41,7 @@ export class Repository {
       )}),(${stepStr(meta.org ?? "tscircuit")}),${stepStr("generator")},${stepStr("")},${stepStr("")});`,
       `FILE_SCHEMA(('${
         this.schema === "AP214"
-          ? "AUTOMOTIVE_DESIGN"
+          ? "AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }"
           : "AP242_MANAGED_MODEL_BASED_3D_ENGINEERING"
       }'));`,
       "ENDSEC;",

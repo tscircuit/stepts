@@ -26,7 +26,7 @@ export class AdvancedBrepShapeRepresentation extends Entity {
   }
   toStep(): string {
     return `ADVANCED_BREP_SHAPE_REPRESENTATION(${
-      this.name ? stepStr(this.name) : "$"
+      stepStr(this.name)
     },(${this.items.join(",")}),${this.context})`
   }
 }

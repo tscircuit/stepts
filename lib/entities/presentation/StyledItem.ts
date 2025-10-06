@@ -26,7 +26,7 @@ export class StyledItem extends Entity {
   }
   toStep(): string {
     return `STYLED_ITEM(${
-      this.name ? stepStr(this.name) : "$"
+      stepStr(this.name)
     },(${this.styles.join(",")}),${this.item})`
   }
 }

@@ -23,7 +23,7 @@ export class FillAreaStyle extends Entity {
   }
   toStep(): string {
     return `FILL_AREA_STYLE(${
-      this.name ? stepStr(this.name) : "$"
+      stepStr(this.name)
     },(${this.items.join(",")}))`
   }
 }

@@ -18,7 +18,7 @@ export class ManifoldSolidBrep extends Entity {
     return new ManifoldSolidBrep(name, ctx.parseRef<ClosedShell>(a[1]))
   }
   toStep(): string {
-    return `MANIFOLD_SOLID_BREP(${this.name ? stepStr(this.name) : "$"},${
+    return `MANIFOLD_SOLID_BREP(${stepStr(this.name)},${
       this.outer
     })`
   }

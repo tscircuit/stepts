@@ -21,9 +21,7 @@ export class ProductDefinitionFormation extends Entity {
     return new ProductDefinitionFormation(id, description, ofProduct)
   }
   toStep(): string {
-    return `PRODUCT_DEFINITION_FORMATION(${
-      this.id ? stepStr(this.id) : "$"
-    },${this.description ? stepStr(this.description) : "$"},${this.ofProduct})`
+    return `PRODUCT_DEFINITION_FORMATION(${stepStr(this.id)},${stepStr(this.description)},${this.ofProduct})`
   }
 }
 

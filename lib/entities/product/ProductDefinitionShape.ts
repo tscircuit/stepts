@@ -21,9 +21,7 @@ export class ProductDefinitionShape extends Entity {
     return new ProductDefinitionShape(name, description, definition)
   }
   toStep(): string {
-    return `PRODUCT_DEFINITION_SHAPE(${this.name ? stepStr(this.name) : "$"},${
-      this.description ? stepStr(this.description) : "$"
-    },${this.definition})`
+    return `PRODUCT_DEFINITION_SHAPE(${stepStr(this.name)},${stepStr(this.description)},${this.definition})`
   }
 }
 

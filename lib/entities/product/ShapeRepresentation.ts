@@ -24,9 +24,7 @@ export class ShapeRepresentation extends Entity {
     return new ShapeRepresentation(name, items, contextOfItems)
   }
   toStep(): string {
-    return `SHAPE_REPRESENTATION(${
-      this.name ? stepStr(this.name) : "$"
-    },(${this.items.join(",")}),${this.contextOfItems})`
+    return `SHAPE_REPRESENTATION(${stepStr(this.name)},(${this.items.join(",")}),${this.contextOfItems})`
   }
 }
 

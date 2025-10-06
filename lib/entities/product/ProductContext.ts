@@ -20,9 +20,7 @@ export class ProductContext extends Entity {
     return new ProductContext(name, frameOfReference, disciplineType)
   }
   toStep(): string {
-    return `PRODUCT_CONTEXT(${this.name ? stepStr(this.name) : "$"},${
-      this.frameOfReference
-    },${stepStr(this.disciplineType)})`
+    return `PRODUCT_CONTEXT(${stepStr(this.name)},${this.frameOfReference},${stepStr(this.disciplineType)})`
   }
 }
 

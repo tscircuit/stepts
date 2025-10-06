@@ -21,7 +21,7 @@ export class Vector extends Entity {
     return new Vector(name, orientation, magnitude)
   }
   toStep(): string {
-    return `VECTOR(${this.name ? stepStr(this.name) : "$"},${
+    return `VECTOR(${stepStr(this.name)},${
       this.orientation
     },${fmtNum(this.magnitude)})`
   }

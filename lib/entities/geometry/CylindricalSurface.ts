@@ -21,7 +21,7 @@ export class CylindricalSurface extends Entity {
     return new CylindricalSurface(name, position, radius)
   }
   toStep(): string {
-    return `CYLINDRICAL_SURFACE(${this.name ? stepStr(this.name) : "$"},${
+    return `CYLINDRICAL_SURFACE(${stepStr(this.name)},${
       this.position
     },${fmtNum(this.radius)})`
   }

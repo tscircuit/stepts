@@ -23,7 +23,7 @@ export class OrientedEdge extends Entity {
   }
   toStep(): string {
     // AP214 canonical form: ( 'name', *, *, #edge, .T.|.F. )
-    return `ORIENTED_EDGE(${this.name ? stepStr(this.name) : "$"},*,*,${
+    return `ORIENTED_EDGE(${stepStr(this.name)},*,*,${
       this.edge
     },${this.orientation ? ".T." : ".F."})`
   }

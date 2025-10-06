@@ -22,11 +22,7 @@ export class ItemDefinedTransformation extends Entity {
     return new ItemDefinedTransformation(name, description, item1, item2)
   }
   toStep(): string {
-    return `ITEM_DEFINED_TRANSFORMATION(${
-      this.name ? stepStr(this.name) : "$"
-    },${this.description ? stepStr(this.description) : "$"},${
-      this.transformItem1
-    },${this.transformItem2})`
+    return `ITEM_DEFINED_TRANSFORMATION(${stepStr(this.name)},${stepStr(this.description)},${this.transformItem1},${this.transformItem2})`
   }
 }
 
