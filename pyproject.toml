@@ -1,0 +1,12 @@
+[project]
+name = "stepts-tools"
+version = "0.1.0"
+description = "Utility scripts for validating STEP files with pythonocc-core"
+readme = "README.md"
+requires-python = ">=3.9,<3.12"
+dependencies = [
+    "pythonocc-core>=7.7.1",
+]
+
+[tool.uv]
+default-groups = []
