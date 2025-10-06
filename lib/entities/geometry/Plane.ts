@@ -13,13 +13,13 @@ export class Plane extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new Plane(
       ctx.parseString(a[0]),
       ctx.parseRef<Axis2Placement3D>(a[1]),
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `PLANE(${stepStr(this.name)},${this.placement})`
   }
 }

@@ -13,7 +13,7 @@ export class FillAreaStyle extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const items = a[1]
       .replace(/^\(|\)$/g, "")
       .split(",")
@@ -21,7 +21,7 @@ export class FillAreaStyle extends Entity {
       .map((tok) => ctx.parseRef<FillAreaStyleColour>(tok))
     return new FillAreaStyle(a[0] === "$" ? "" : ctx.parseString(a[0]), items)
   }
-  toStep(): string {
+  override toStep(): string {
     return `FILL_AREA_STYLE(${
       stepStr(this.name)
     },(${this.items.join(",")}))`

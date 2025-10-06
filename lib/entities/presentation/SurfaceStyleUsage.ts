@@ -12,13 +12,13 @@ export class SurfaceStyleUsage extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new SurfaceStyleUsage(
       a[0].trim() as any,
       ctx.parseRef<SurfaceSideStyle>(a[1]),
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `SURFACE_STYLE_USAGE(${this.side},${this.style})`
   }
 }

@@ -16,14 +16,14 @@ export class Axis2Placement3D extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = ctx.parseString(a[0])
     const loc = ctx.parseRef<CartesianPoint>(a[1])
     const axis = a[2] !== "$" ? ctx.parseRef<Direction>(a[2]) : undefined
     const refd = a[3] !== "$" ? ctx.parseRef<Direction>(a[3]) : undefined
     return new Axis2Placement3D(name, loc, axis, refd)
   }
-  toStep(): string {
+  override toStep(): string {
     const A = this.axis ? this.axis.toString() : "$"
     const R = this.refDirection ? this.refDirection.toString() : "$"
     return `AXIS2_PLACEMENT_3D(${stepStr(this.name)},${

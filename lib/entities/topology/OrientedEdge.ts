@@ -14,14 +14,14 @@ export class OrientedEdge extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     // edge geometry and vertices are usually "$" in AP214 oriented edge rows
     const edge = ctx.parseRef<EdgeCurve>(a[3])
     const orient = a[4]?.trim?.() === ".T." || a[2]?.trim?.() === ".T." // exporter variance
     return new OrientedEdge(name, edge, orient)
   }
-  toStep(): string {
+  override toStep(): string {
     // AP214 canonical form: ( 'name', *, *, #edge, .T.|.F. )
     return `ORIENTED_EDGE(${stepStr(this.name)},*,*,${
       this.edge

@@ -14,7 +14,7 @@ export class ColourRgb extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new ColourRgb(
       ctx.parseString(a[0]),
       ctx.parseNumber(a[1]),
@@ -22,7 +22,7 @@ export class ColourRgb extends Entity {
       ctx.parseNumber(a[3]),
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `COLOUR_RGB(${stepStr(this.name)},${this.r},${this.g},${this.b})`
   }
 }

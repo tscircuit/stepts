@@ -13,13 +13,13 @@ export class FillAreaStyleColour extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new FillAreaStyleColour(
       ctx.parseString(a[0]),
       ctx.parseRef<ColourRgb>(a[1]),
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `FILL_AREA_STYLE_COLOUR(${stepStr(this.name)},${this.colour})`
   }
 }

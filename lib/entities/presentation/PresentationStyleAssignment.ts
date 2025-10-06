@@ -9,7 +9,7 @@ export class PresentationStyleAssignment extends Entity {
   constructor(public items: Ref<SurfaceStyleUsage>[]) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     const list = a[0]
       .replace(/^\(|\)$/g, "")
       .split(",")
@@ -17,7 +17,7 @@ export class PresentationStyleAssignment extends Entity {
       .map((tok) => ctx.parseRef<SurfaceStyleUsage>(tok))
     return new PresentationStyleAssignment(list)
   }
-  toStep(): string {
+  override toStep(): string {
     return `PRESENTATION_STYLE_ASSIGNMENT((${this.items.join(",")}))`
   }
 }

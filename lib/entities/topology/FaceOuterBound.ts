@@ -12,13 +12,13 @@ export class FaceOuterBound extends Entity {
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
+  static override parse(a: string[], ctx: ParseContext) {
     return new FaceOuterBound(
       ctx.parseRef<EdgeLoop>(a[0]),
       a[1].trim() === ".T.",
     )
   }
-  toStep(): string {
+  override toStep(): string {
     return `FACE_OUTER_BOUND(${this.bound},${this.sameSense ? ".T." : ".F."})`
   }
 }
