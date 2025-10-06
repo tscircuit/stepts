@@ -4,7 +4,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "validate-step": "uv run scripts/validate_step.py",
+    "format": "biome format --write ."
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",

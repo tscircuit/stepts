@@ -99,6 +99,25 @@ for (const [id, entity] of repo.entries()) {
 }
 ```
 
+### Validating a STEP file with pythonocc-core
+
+This repository bundles a Python utility that runs OpenCascade's topology
+checks against an exported STEP file.  Install the Python dependency set with
+[`uv`](https://docs.astral.sh/uv/) (Python 3.9–3.11 is required):
+
+```bash
+uv sync --python 3.10
+```
+
+You can then validate any STEP file using Bun's script runner:
+
+```bash
+bun run validate-step ./path/to/model.step
+```
+
+Pass `--largest` to restrict validation to the largest solid in the file and
+`--strict` to return a non-zero exit code when OpenCascade reports warnings.
+
 ## Testing
 
 ```bash
