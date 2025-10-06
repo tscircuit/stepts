@@ -178,28 +178,7 @@ console.log(resolvedPoint.x, resolvedPoint.y, resolvedPoint.z)
 
 ## Validation
 
-Validate your STEP files with `occt-import-js`:
-
-```typescript
-import { importStepWithOcct } from "stepts"
-import { readFileSync } from "fs"
-
-const stepData = readFileSync("output.step")
-const result = await importStepWithOcct(stepData)
-
-if (result.success) {
-  console.log(`✓ Valid STEP file`)
-  console.log(`  - Meshes: ${result.meshes.length}`)
-  console.log(
-    `  - Triangles: ${result.meshes.reduce(
-      (sum, m) => sum + m.index.array.length / 3,
-      0
-    )}`
-  )
-} else {
-  console.error("Invalid STEP file")
-}
-```
+You can validate STEP files using third-party tools like `occt-import-js`. This library focuses on parsing, creating, and serializing STEP files, while validation can be performed by external CAD kernels.
 
 ## API Reference
 

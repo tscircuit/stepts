@@ -37,8 +37,8 @@ import {
   Unknown,
   Vector,
   VertexPoint,
-  importStepWithOcct,
 } from "../../lib"
+import { importStepWithOcct } from "../utils/occt/importer"
 import { readFileSync } from "node:fs"
 
 test("create a simple box", async () => {

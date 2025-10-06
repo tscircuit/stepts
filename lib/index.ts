@@ -50,17 +50,7 @@ export { VertexPoint } from "./entities/topology/VertexPoint"
 export { Unknown } from "./entities/Unknown"
 // Parse
 export * from "./parse"
-// Importers
-export {
-  importStepWithOcct,
-  type OcctImportParams,
-  type OcctImportResult,
-  type OcctMesh,
-  type OcctImportNode,
-  type OcctLinearUnit,
-  type OcctLinearDeflectionType,
-  type StepInput,
-} from "./importers/occt"
+
 // Types
 export type { Curve } from "./types/geometry"
 export type { Surface } from "./types/topology"

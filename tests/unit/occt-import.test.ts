@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs"
 import { expect, test } from "bun:test"
-import { importStepWithOcct } from "../../lib"
+import { importStepWithOcct } from "../utils/occt/importer"
 
 const fixtureUrl = new URL("../fixtures/simple-box.step", import.meta.url)
 
