@@ -5,6 +5,8 @@ description = "STEP file validator using pythonocc-core"
 requires-python = ">=3.9"
 dependencies = [
     "pythonocc-core>=7.7.0",
+    "trimesh>=4.0.0",
+    "numpy>=1.20.0",
 ]
 
 [build-system]
