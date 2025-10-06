@@ -8,18 +8,20 @@ import type { Axis2Placement3D } from "./Axis2Placement3D"
 export class Circle extends Entity {
   readonly type = "CIRCLE"
   constructor(
+    public name: string,
     public placement: Ref<Axis2Placement3D>,
     public radius: number,
   ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
-    const pl = ctx.parseRef<Axis2Placement3D>(a[0])
-    const r = ctx.parseNumber(a[1])
-    return new Circle(pl, r)
+  static override parse(a: string[], ctx: ParseContext) {
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
+    const pl = ctx.parseRef<Axis2Placement3D>(a[1])
+    const r = ctx.parseNumber(a[2])
+    return new Circle(name, pl, r)
   }
   toStep(): string {
-    return `CIRCLE(${this.placement},${fmtNum(this.radius)})`
+    return `CIRCLE(${this.name ? `'${this.name}'` : "''"},${this.placement},${fmtNum(this.radius)})`
   }
 }
 

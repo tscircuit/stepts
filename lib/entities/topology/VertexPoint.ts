@@ -6,14 +6,18 @@ import type { CartesianPoint } from "../geometry/CartesianPoint"
 
 export class VertexPoint extends Entity {
   readonly type = "VERTEX_POINT"
-  constructor(public pnt: Ref<CartesianPoint>) {
+  constructor(
+    public name: string,
+    public pnt: Ref<CartesianPoint>,
+  ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
-    return new VertexPoint(ctx.parseRef<CartesianPoint>(a[0]))
+  static override parse(a: string[], ctx: ParseContext) {
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
+    return new VertexPoint(name, ctx.parseRef<CartesianPoint>(a[1]))
   }
   toStep(): string {
-    return `VERTEX_POINT(${this.pnt})`
+    return `VERTEX_POINT(${this.name ? `'${this.name}'` : "''"},${this.pnt})`
   }
 }
 

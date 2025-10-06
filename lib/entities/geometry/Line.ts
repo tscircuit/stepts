@@ -8,14 +8,16 @@ import type { Vector } from "./Vector"
 export class Line extends Entity {
   readonly type = "LINE"
   constructor(
+    public name: string,
     public pnt: Ref<CartesianPoint>,
     public dir: Ref<Vector>,
   ) {
     super()
   }
   static override parse(a: string[], ctx: ParseContext) {
-    const p = ctx.parseRef<CartesianPoint>(a[0])
-    const vecTok = a[1]
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
+    const p = ctx.parseRef<CartesianPoint>(a[1])
+    const vecTok = a[2]
 
     // Support both inline VECTOR(...) and references to VECTOR entities
     if (vecTok.startsWith("VECTOR(")) {
@@ -28,10 +30,10 @@ export class Line extends Entity {
 
     // Reference to VECTOR entity
     const vec = ctx.parseRef<Vector>(vecTok)
-    return new Line(p, vec)
+    return new Line(name, p, vec)
   }
   toStep(): string {
-    return `LINE(${this.pnt},${this.dir})`
+    return `LINE(${this.name ? `'${this.name}'` : "''"},${this.pnt},${this.dir})`
   }
 }
 

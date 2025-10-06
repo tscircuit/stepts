@@ -6,19 +6,23 @@ import type { AdvancedFace } from "./AdvancedFace"
 
 export class ClosedShell extends Entity {
   readonly type = "CLOSED_SHELL"
-  constructor(public faces: Ref<AdvancedFace>[]) {
+  constructor(
+    public name: string,
+    public faces: Ref<AdvancedFace>[],
+  ) {
     super()
   }
-  static parse(a: string[], ctx: ParseContext) {
-    const faces = a[0]
+  static override parse(a: string[], ctx: ParseContext) {
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
+    const faces = a[1]
       .replace(/^\(|\)$/g, "")
       .split(",")
       .filter(Boolean)
-      .map((tok) => ctx.parseRef<AdvancedFace>(tok))
-    return new ClosedShell(faces)
+      .map((tok) => ctx.parseRef<AdvancedFace>(tok.trim()))
+    return new ClosedShell(name, faces)
   }
   toStep(): string {
-    return `CLOSED_SHELL((${this.faces.join(",")}))`
+    return `CLOSED_SHELL(${this.name ? `'${this.name}'` : "''"},(${this.faces.join(",")}))`
   }
 }
 

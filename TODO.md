@@ -5,13 +5,13 @@ This checklist tracks progress toward full support for parsing and round-trippin
 ## Overview
 
 **Target File**: `tests/roundtrip/kicadoutput01/kicadoutput01.step.txt`
-- **Total Entities**: 1,878 entities (parsed: 1,859)
-- **Unique Entity Types**: 41 types
-- **Currently Supported**: 41 types (100%)
-- **Unknown Entities in Test File**: 0 ✅
-- **Infrastructure**: Multi-line entity parsing ✅
+- **Total Entities**: 1,878 entities (parsed: 1,878) ✅
+- **Unique Entity Types**: 42 types (41 specific + Unknown)
+- **Currently Supported**: 41 specific types + 19 complex multi-inheritance entities
+- **Unknown Entities**: 19 (complex multi-inheritance: GEOMETRIC_REPRESENTATION_CONTEXT, LENGTH_UNIT, etc.)
+- **Infrastructure**: Multi-line entity parsing ✅, Complex entity preservation ✅
 
-**Progress**: ████████████████████████████ 41/41 (100%) ✅
+**Progress**: ████████████████████████████ 41/41 (100%) + 19 complex entities preserved ✅
 
 ## Already Implemented 
 
@@ -245,15 +245,17 @@ The library successfully parses the KiCad STEP file!
 
 ### Test Results
 
-- **Parsed Entities**: 1,859 / 1,878 (99%)
-- **Unknown Entities**: 0 (100% coverage)
+- **Parsed Entities**: 1,878 / 1,878 (100%) ✅
+- **Specific Entity Types**: 41 types fully implemented
+- **Complex Entities**: 19 multi-inheritance entities preserved as Unknown
+- **Round-Trip**: ✅ All entities serialize and re-parse correctly
 - **All Tests Passing**: ✅
 
 ### Next Steps
 
-1. Implement round-trip testing (parse → serialize → parse)
-2. Add validation for entity reference integrity
-3. Add complex multi-inheritance entity parsing (optional - not needed for current file)
-4. Add unit entity types if needed (currently handled as Unknown)
+1. ✅ Implement round-trip testing (parse → serialize → parse)
+2. ✅ Complex multi-inheritance entity preservation
+3. Add validation for entity reference integrity (optional)
+4. Add full complex entity parsing with proper type modeling (optional - currently preserved as Unknown)
 
 **Status**: The library is ready for production use with KiCad STEP files and similar AP214 STEP files!
