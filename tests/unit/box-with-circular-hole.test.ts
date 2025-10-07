@@ -43,6 +43,8 @@ import {
 } from "../../lib"
 import { importStepWithOcct } from "../utils/occt/importer"
 import { readFileSync } from "node:fs"
+import "../fixtures/png-matcher"
+import "../fixtures/step-snapshot"
 
 test("create a box with a circular hole through it", async () => {
   const repo = new Repository()
@@ -415,11 +417,7 @@ test("create a box with a circular hole through it", async () => {
   // Emit STEP text
   const stepText = repo.toPartFile({ name: "box-with-circular-hole" })
 
-  // Write to debug-output
-  const outputPath = "/Users/seve/w/tsc/stepts/debug-output/box-with-circular-hole.step"
-  writeFileSync(outputPath, stepText)
-
-  console.log("STEP file written to debug-output/box-with-circular-hole.step")
+  console.log("Generated STEP file for box-with-circular-hole")
 
   // Verify output contains expected entities
   expect(stepText).toContain("ISO-10303-21")
@@ -430,7 +428,7 @@ test("create a box with a circular hole through it", async () => {
 
   // Validate with occt-import-js
   console.log("Validating with occt-import-js...")
-  const stepData = readFileSync(outputPath)
+  const stepData = new TextEncoder().encode(stepText)
   const result = await importStepWithOcct(stepData)
 
   expect(result.success).toBe(true)
@@ -439,4 +437,7 @@ test("create a box with a circular hole through it", async () => {
   console.log("✓ STEP file validated successfully with occt-import-js")
   console.log(`  - Meshes: ${result.meshes.length}`)
   console.log(`  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`)
+
+  // Visual snapshot test
+  await expect(stepData).toMatchStepSnapshot(import.meta.path, "box-with-circular-hole")
 })

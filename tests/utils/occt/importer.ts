@@ -1,3 +1,5 @@
+import * as occtImported from "occt-import-js"
+
 export type OcctLinearUnit =
   | "millimeter"
   | "centimeter"
@@ -72,8 +74,7 @@ let occtInstancePromise: Promise<OcctImport> | undefined
 
 async function loadOcct(): Promise<OcctImport> {
   if (!occtInstancePromise) {
-    const imported = (await import("occt-import-js")) as unknown
-    const factory = resolveFactory(imported)
+    const factory = resolveFactory(occtImported as unknown)
     occtInstancePromise = factory()
   }
   return occtInstancePromise
