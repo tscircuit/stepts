@@ -373,4 +373,9 @@ test("create a simple box", async () => {
   console.log(
     `  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`,
   )
+
+  await expect(stepData).toMatchStepSnapshot(
+    import.meta.path,
+    "simple-white-box",
+  )
 })

@@ -2,7 +2,6 @@ import { expect, test } from "bun:test"
 import { readFileSync, existsSync, rmSync } from "node:fs"
 import * as path from "node:path"
 import { fileURLToPath } from "node:url"
-import "../fixtures/step-snapshot"
 
 const fixtureUrl = new URL("../fixtures/simple-box.step", import.meta.url)
 
