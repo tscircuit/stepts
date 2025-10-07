@@ -25,9 +25,9 @@ export class AdvancedBrepShapeRepresentation extends Entity {
     return new AdvancedBrepShapeRepresentation(name, items, c)
   }
   override toStep(): string {
-    return `ADVANCED_BREP_SHAPE_REPRESENTATION(${
-      stepStr(this.name)
-    },(${this.items.join(",")}),${this.context})`
+    return `ADVANCED_BREP_SHAPE_REPRESENTATION(${stepStr(
+      this.name,
+    )},(${this.items.join(",")}),${this.context})`
   }
 }
 

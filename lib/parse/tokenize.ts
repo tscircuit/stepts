@@ -36,7 +36,10 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
   // Extract each entity by finding the closing semicolon
   for (let i = 0; i < entityStarts.length; i++) {
     const start = entityStarts[i]
-    const nextStart = i + 1 < entityStarts.length ? entityStarts[i + 1].index : dataSection.length
+    const nextStart =
+      i + 1 < entityStarts.length
+        ? entityStarts[i + 1].index
+        : dataSection.length
 
     // Find the entity text between this start and next start
     const entityText = dataSection.substring(start.index, nextStart)
@@ -44,7 +47,9 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
     // Find the first semicolon - that's the end of this entity
     const semiIndex = entityText.indexOf(";")
     if (semiIndex === -1) {
-      throw new Error(`Could not find closing semicolon for entity #${start.id}`)
+      throw new Error(
+        `Could not find closing semicolon for entity #${start.id}`,
+      )
     }
 
     const fullEntity = entityText.substring(0, semiIndex + 1)
@@ -56,15 +61,23 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
       // Complex entity: treat the whole thing as Unknown for now
       const complexMatch = fullEntity.match(/#\d+\s*=\s*\(([\s\S]*)\);/)
       if (!complexMatch) {
-        throw new Error(`Could not parse complex entity: ${fullEntity.substring(0, 100)}`)
+        throw new Error(
+          `Could not parse complex entity: ${fullEntity.substring(0, 100)}`,
+        )
       }
       // Store as type "Unknown" with the complex structure in args[0]
-      entities.push({ id: eid(start.id), type: "Unknown", args: [`( ${complexMatch[1].trim()} )`] })
+      entities.push({
+        id: eid(start.id),
+        type: "Unknown",
+        args: [`( ${complexMatch[1].trim()} )`],
+      })
     } else {
       // Simple entity
       const match = fullEntity.match(/#\d+\s*=\s*([A-Z0-9_]+)\s*\(([\s\S]*)\);/)
       if (!match) {
-        throw new Error(`Could not parse entity: ${fullEntity.substring(0, 100)}`)
+        throw new Error(
+          `Could not parse entity: ${fullEntity.substring(0, 100)}`,
+        )
       }
 
       const type = match[1].trim()

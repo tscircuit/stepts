@@ -22,9 +22,9 @@ export class SurfaceSideStyle extends Entity {
     return new SurfaceSideStyle(a[0] === "$" ? "" : ctx.parseString(a[0]), list)
   }
   override toStep(): string {
-    return `SURFACE_SIDE_STYLE(${
-      stepStr(this.name)
-    },(${this.styles.join(",")}))`
+    return `SURFACE_SIDE_STYLE(${stepStr(
+      this.name,
+    )},(${this.styles.join(",")}))`
   }
 }
 

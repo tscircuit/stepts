@@ -23,7 +23,9 @@ test("parse KiCad STEP file", () => {
 
   // Log entity type distribution
   console.log("\nEntity type distribution:")
-  const sortedTypes = Array.from(typeCounts.entries()).sort((a, b) => b[1] - a[1])
+  const sortedTypes = Array.from(typeCounts.entries()).sort(
+    (a, b) => b[1] - a[1],
+  )
   for (const [type, count] of sortedTypes) {
     console.log(`  ${type}: ${count}`)
   }

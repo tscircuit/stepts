@@ -41,3 +41,7 @@ debug-output
 .venv
 __pycache__
 *.pyc
+.aider*
+
+# Snapshot diff files
+*.diff.png

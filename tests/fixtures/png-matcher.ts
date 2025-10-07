@@ -49,13 +49,22 @@ async function toMatchPngSnapshot(
 
   const existingSnapshot = fs.readFileSync(filePath)
 
+  const strict =
+    process.env["PNG_SNAPSHOT_STRICT"] === "1" ||
+    process.env["CI"] === "true" ||
+    process.env["CI"] === "1"
+  const tolerance = Number(process.env["PNG_SNAPSHOT_TOLERANCE"] ?? 5)
+  const antialiasingTolerance = Number(
+    process.env["PNG_SNAPSHOT_AA_TOLERANCE"] ?? 4,
+  )
+
   const result: any = await looksSame(
     Buffer.from(received),
     Buffer.from(existingSnapshot),
     {
-      strict: false,
-      tolerance: 5,
-      antialiasingTolerance: 4,
+      strict,
+      tolerance,
+      antialiasingTolerance,
       ignoreCaret: true,
       shouldCluster: true,
       clustersSize: 10,
@@ -112,6 +121,7 @@ async function toMatchPngSnapshot(
 
     // If difference is too large, create diff image
     const diffPath = filePath.replace(/\.snap\.png$/, ".diff.png")
+
     await looksSame.createDiff({
       reference: Buffer.from(existingSnapshot),
       current: Buffer.from(received),
@@ -121,13 +131,14 @@ async function toMatchPngSnapshot(
 
     return {
       message: () =>
-        `PNG snapshot differs by ${diffPercentage.toFixed(3)}% (threshold: ${ACCEPTABLE_DIFF_PERCENTAGE}%). Diff saved at ${diffPath}. Use BUN_UPDATE_SNAPSHOTS=1 to update the snapshot.`,
+        `PNG snapshot differs by ${diffPercentage.toFixed(3)}% (threshold: ${ACCEPTABLE_DIFF_PERCENTAGE}%).\nDiff: ${diffPath}\nSet BUN_UPDATE_SNAPSHOTS=1 or run the update script to update the snapshot.`,
       pass: false,
     }
   }
 
   // Fallback if diffBounds isn't available
   const diffPath = filePath.replace(/\.snap\.png$/, ".diff.png")
+
   await looksSame.createDiff({
     reference: Buffer.from(existingSnapshot),
     current: Buffer.from(received),
@@ -139,7 +150,7 @@ async function toMatchPngSnapshot(
   console.log(`   Diff saved: ${diffPath}`)
 
   return {
-    message: () => `PNG snapshot does not match. Diff saved at ${diffPath}`,
+    message: () => `PNG snapshot does not match.\nDiff: ${diffPath}`,
     pass: false,
   }
 }

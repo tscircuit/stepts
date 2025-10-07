@@ -8,6 +8,8 @@
   "license": "MIT",
   "scripts": {
     "test": "bun test",
+    "test:update-snapshots": "BUN_UPDATE_SNAPSHOTS=1 bun test",
+    "test:visual": "bun test tests/unit/visual-simple-box.test.ts",
     "build": "tsup-node lib/index.ts --format esm --dts",
     "format": "biome format --write .",
     "format:check": "biome format ."
@@ -17,6 +19,7 @@
     "@types/bun": "latest",
     "looks-same": "^10.0.1",
     "occt-import-js": "^0.0.23",
+    "poppygl": "^0.0.13",
     "tsup": "^8.5.0"
   },
   "peerDependencies": {

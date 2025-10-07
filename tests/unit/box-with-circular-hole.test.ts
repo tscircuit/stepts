@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs"
+import { mkdirSync, writeFileSync } from "node:fs"
 import { expect, test } from "bun:test"
 import {
   AdvancedBrepShapeRepresentation,
@@ -49,7 +49,9 @@ test("create a box with a circular hole through it", async () => {
 
   // Product structure (required for STEP validation)
   const appContext = repo.add(
-    new ApplicationContext("core data for automotive mechanical design processes"),
+    new ApplicationContext(
+      "core data for automotive mechanical design processes",
+    ),
   )
   repo.add(
     new ApplicationProtocolDefinition(
@@ -59,9 +61,13 @@ test("create a box with a circular hole through it", async () => {
       appContext,
     ),
   )
-  const productContext = repo.add(new ProductContext("", appContext, "mechanical"))
+  const productContext = repo.add(
+    new ProductContext("", appContext, "mechanical"),
+  )
   const product = repo.add(
-    new Product("box-with-circular-hole", "box-with-circular-hole", "", [productContext]),
+    new Product("box-with-circular-hole", "box-with-circular-hole", "", [
+      productContext,
+    ]),
   )
   const productDefContext = repo.add(
     new ProductDefinitionContext("part definition", appContext, "design"),
@@ -72,17 +78,25 @@ test("create a box with a circular hole through it", async () => {
   const productDef = repo.add(
     new ProductDefinition("", "", productDefFormation, productDefContext),
   )
-  const productDefShape = repo.add(new ProductDefinitionShape("", "", productDef))
+  const productDefShape = repo.add(
+    new ProductDefinitionShape("", "", productDef),
+  )
 
   // Representation context
   const lengthUnit = repo.add(
-    new Unknown("", ["( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )"]),
+    new Unknown("", [
+      "( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )",
+    ]),
   )
   const angleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )",
+    ]),
   )
   const solidAngleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )",
+    ]),
   )
   const uncertainty = repo.add(
     new Unknown("UNCERTAINTY_MEASURE_WITH_UNIT", [
@@ -121,16 +135,27 @@ test("create a box with a circular hole through it", async () => {
 
   // For a circular hole, we need a vertex on the circle for the front face
   const holeFrontVertex = repo.add(
-    new VertexPoint("", repo.add(new CartesianPoint("", holeCenter + holeRadius, 0, holeCenter))),
+    new VertexPoint(
+      "",
+      repo.add(new CartesianPoint("", holeCenter + holeRadius, 0, holeCenter)),
+    ),
   )
 
   // And a vertex on the circle for the back face
   const holeBackVertex = repo.add(
-    new VertexPoint("", repo.add(new CartesianPoint("", holeCenter + holeRadius, size, holeCenter))),
+    new VertexPoint(
+      "",
+      repo.add(
+        new CartesianPoint("", holeCenter + holeRadius, size, holeCenter),
+      ),
+    ),
   )
 
   // Helper to create an edge between two vertices using a line
-  function createEdge(v1: Ref<VertexPoint>, v2: Ref<VertexPoint>): Ref<EdgeCurve> {
+  function createEdge(
+    v1: Ref<VertexPoint>,
+    v2: Ref<VertexPoint>,
+  ): Ref<EdgeCurve> {
     const p1 = v1.resolve(repo).pnt.resolve(repo)
     const p2 = v2.resolve(repo).pnt.resolve(repo)
     const dir = repo.add(
@@ -157,28 +182,34 @@ test("create a box with a circular hole through it", async () => {
 
   // Create circular hole edges
   // Front face hole (y=0, circle in XZ plane)
-  const frontHoleCenter = repo.add(new CartesianPoint("", holeCenter, 0, holeCenter))
+  const frontHoleCenter = repo.add(
+    new CartesianPoint("", holeCenter, 0, holeCenter),
+  )
   const frontHolePlacement = repo.add(
     new Axis2Placement3D(
       "",
       frontHoleCenter,
       repo.add(new Direction("", 0, -1, 0)), // normal pointing forward (-Y)
-      repo.add(new Direction("", 1, 0, 0)),   // X direction
+      repo.add(new Direction("", 1, 0, 0)), // X direction
     ),
   )
-  const frontHoleCircle = repo.add(new Circle("", frontHolePlacement, holeRadius))
+  const frontHoleCircle = repo.add(
+    new Circle("", frontHolePlacement, holeRadius),
+  )
   const frontHoleEdge = repo.add(
     new EdgeCurve("", holeFrontVertex, holeFrontVertex, frontHoleCircle, true),
   )
 
   // Back face hole (y=size, circle in XZ plane)
-  const backHoleCenter = repo.add(new CartesianPoint("", holeCenter, size, holeCenter))
+  const backHoleCenter = repo.add(
+    new CartesianPoint("", holeCenter, size, holeCenter),
+  )
   const backHolePlacement = repo.add(
     new Axis2Placement3D(
       "",
       backHoleCenter,
-      repo.add(new Direction("", 0, 1, 0)),  // normal pointing backward (+Y)
-      repo.add(new Direction("", 1, 0, 0)),  // X direction
+      repo.add(new Direction("", 0, 1, 0)), // normal pointing backward (+Y)
+      repo.add(new Direction("", 1, 0, 0)), // X direction
     ),
   )
   const backHoleCircle = repo.add(new Circle("", backHolePlacement, holeRadius))
@@ -194,7 +225,12 @@ test("create a box with a circular hole through it", async () => {
 
   // Bottom face (z=0, normal pointing down) - no hole
   const bottomFrame = repo.add(
-    new Axis2Placement3D("", origin, repo.add(new Direction("", 0, 0, -1)), xDir),
+    new Axis2Placement3D(
+      "",
+      origin,
+      repo.add(new Direction("", 0, 0, -1)),
+      xDir,
+    ),
   )
   const bottomPlane = repo.add(new Plane("", bottomFrame))
   const bottomLoop = repo.add(
@@ -254,9 +290,7 @@ test("create a box with a circular hole through it", async () => {
     ]),
   )
   const frontHoleLoop = repo.add(
-    new EdgeLoop("", [
-      repo.add(new OrientedEdge("", frontHoleEdge, false)),
-    ]),
+    new EdgeLoop("", [repo.add(new OrientedEdge("", frontHoleEdge, false))]),
   )
   const frontFace = repo.add(
     new AdvancedFace(
@@ -283,9 +317,7 @@ test("create a box with a circular hole through it", async () => {
     ]),
   )
   const backHoleLoop = repo.add(
-    new EdgeLoop("", [
-      repo.add(new OrientedEdge("", backHoleEdge, true)),
-    ]),
+    new EdgeLoop("", [repo.add(new OrientedEdge("", backHoleEdge, true))]),
   )
   const backFace = repo.add(
     new AdvancedFace(
@@ -353,11 +385,13 @@ test("create a box with a circular hole through it", async () => {
     new Axis2Placement3D(
       "",
       frontHoleCenter,
-      repo.add(new Direction("", 0, 1, 0)),  // axis along Y
-      repo.add(new Direction("", 1, 0, 0)),  // ref direction
+      repo.add(new Direction("", 0, 1, 0)), // axis along Y
+      repo.add(new Direction("", 1, 0, 0)), // ref direction
     ),
   )
-  const cylinderSurface = repo.add(new CylindricalSurface("", cylinderPlacement, holeRadius))
+  const cylinderSurface = repo.add(
+    new CylindricalSurface("", cylinderPlacement, holeRadius),
+  )
   const cylinderLoop = repo.add(
     new EdgeLoop("", [
       repo.add(new OrientedEdge("", frontHoleEdge, true)),
@@ -408,7 +442,11 @@ test("create a box with a circular hole through it", async () => {
 
   // Shape representation
   const shapeRep = repo.add(
-    new AdvancedBrepShapeRepresentation("box-with-circular-hole", [solid], geomContext),
+    new AdvancedBrepShapeRepresentation(
+      "box-with-circular-hole",
+      [solid],
+      geomContext,
+    ),
   )
   repo.add(new ShapeDefinitionRepresentation(productDefShape, shapeRep))
 
@@ -416,7 +454,8 @@ test("create a box with a circular hole through it", async () => {
   const stepText = repo.toPartFile({ name: "box-with-circular-hole" })
 
   // Write to debug-output
-  const outputPath = "/Users/seve/w/tsc/stepts/debug-output/box-with-circular-hole.step"
+  mkdirSync("debug-output", { recursive: true })
+  const outputPath = "debug-output/box-with-circular-hole.step"
   writeFileSync(outputPath, stepText)
 
   console.log("STEP file written to debug-output/box-with-circular-hole.step")
@@ -438,5 +477,7 @@ test("create a box with a circular hole through it", async () => {
 
   console.log("✓ STEP file validated successfully with occt-import-js")
   console.log(`  - Meshes: ${result.meshes.length}`)
-  console.log(`  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`)
+  console.log(
+    `  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`,
+  )
 })

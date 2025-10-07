@@ -20,7 +20,12 @@ export class ApplicationProtocolDefinition extends Entity {
     const schemaName = ctx.parseString(a[1])
     const year = ctx.parseNumber(a[2])
     const application = ctx.parseRef<ApplicationContext>(a[3])
-    return new ApplicationProtocolDefinition(status, schemaName, year, application)
+    return new ApplicationProtocolDefinition(
+      status,
+      schemaName,
+      year,
+      application,
+    )
   }
   toStep(): string {
     return `APPLICATION_PROTOCOL_DEFINITION(${stepStr(this.status)},${stepStr(
