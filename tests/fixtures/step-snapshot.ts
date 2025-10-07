@@ -232,7 +232,6 @@ async function toMatchStepSnapshot(
 ) {
   const png = await renderStepToPNG(stepContent)
   // Delegate to existing PNG matcher for snapshot compare/update UX
-  // @ts-expect-error - custom matcher registered globally
   return await expect(png).toMatchPngSnapshot(testPathOriginal, pngName)
 }
 
