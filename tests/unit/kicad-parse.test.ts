@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { readFileSync } from "fs"
 import { parseRepository } from "../../lib"
 
-test("parse KiCad STEP file", () => {
+test("parse KiCad STEP file", async () => {
   const stepText = readFileSync(
     "tests/roundtrip/kicadoutput01/kicadoutput01.step.txt",
     "utf-8",
@@ -23,7 +23,9 @@ test("parse KiCad STEP file", () => {
 
   // Log entity type distribution
   console.log("\nEntity type distribution:")
-  const sortedTypes = Array.from(typeCounts.entries()).sort((a, b) => b[1] - a[1])
+  const sortedTypes = Array.from(typeCounts.entries()).sort(
+    (a, b) => b[1] - a[1],
+  )
   for (const [type, count] of sortedTypes) {
     console.log(`  ${type}: ${count}`)
   }
@@ -33,4 +35,7 @@ test("parse KiCad STEP file", () => {
   console.log(`\nUnknown entities: ${unknownCount}`)
 
   expect(entries.length).toBeGreaterThan(0)
-})
+
+  // Visual snapshot of the full KiCad STEP scene
+  await expect(stepText).toMatchStepSnapshot(import.meta.path, "kicadoutput01")
+}, 60000)

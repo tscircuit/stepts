@@ -17,4 +17,7 @@ export class ApplicationContext extends Entity {
   }
 }
 
-register("APPLICATION_CONTEXT", ApplicationContext.parse.bind(ApplicationContext))
+register(
+  "APPLICATION_CONTEXT",
+  ApplicationContext.parse.bind(ApplicationContext),
+)

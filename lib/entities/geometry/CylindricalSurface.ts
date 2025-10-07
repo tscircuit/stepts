@@ -27,4 +27,7 @@ export class CylindricalSurface extends Entity {
   }
 }
 
-register("CYLINDRICAL_SURFACE", CylindricalSurface.parse.bind(CylindricalSurface))
+register(
+  "CYLINDRICAL_SURFACE",
+  CylindricalSurface.parse.bind(CylindricalSurface),
+)

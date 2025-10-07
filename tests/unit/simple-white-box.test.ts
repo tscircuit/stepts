@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs"
+import { mkdirSync, writeFileSync } from "node:fs"
 import { expect, test } from "bun:test"
 import {
   AdvancedBrepShapeRepresentation,
@@ -46,7 +46,9 @@ test("create a simple box", async () => {
 
   // Product structure (required for STEP validation)
   const appContext = repo.add(
-    new ApplicationContext("core data for automotive mechanical design processes"),
+    new ApplicationContext(
+      "core data for automotive mechanical design processes",
+    ),
   )
   repo.add(
     new ApplicationProtocolDefinition(
@@ -56,7 +58,9 @@ test("create a simple box", async () => {
       appContext,
     ),
   )
-  const productContext = repo.add(new ProductContext("", appContext, "mechanical"))
+  const productContext = repo.add(
+    new ProductContext("", appContext, "mechanical"),
+  )
   const product = repo.add(
     new Product("simple-box", "simple-box", "", [productContext]),
   )
@@ -69,17 +73,25 @@ test("create a simple box", async () => {
   const productDef = repo.add(
     new ProductDefinition("", "", productDefFormation, productDefContext),
   )
-  const productDefShape = repo.add(new ProductDefinitionShape("", "", productDef))
+  const productDefShape = repo.add(
+    new ProductDefinitionShape("", "", productDef),
+  )
 
   // Representation context
   const lengthUnit = repo.add(
-    new Unknown("", ["( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )"]),
+    new Unknown("", [
+      "( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )",
+    ]),
   )
   const angleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )",
+    ]),
   )
   const solidAngleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )",
+    ]),
   )
   const uncertainty = repo.add(
     new Unknown("UNCERTAINTY_MEASURE_WITH_UNIT", [
@@ -153,7 +165,12 @@ test("create a simple box", async () => {
 
   // Bottom face (z=0, normal pointing down)
   const bottomFrame = repo.add(
-    new Axis2Placement3D("", origin, repo.add(new Direction("", 0, 0, -1)), xDir),
+    new Axis2Placement3D(
+      "",
+      origin,
+      repo.add(new Direction("", 0, 0, -1)),
+      xDir,
+    ),
   )
   const bottomPlane = repo.add(new Plane("", bottomFrame))
   const bottomLoop = repo.add(
@@ -332,7 +349,8 @@ test("create a simple box", async () => {
   const stepText = repo.toPartFile({ name: "simple-box" })
 
   // Write to debug-output
-  const outputPath = "/Users/seve/w/tsc/stepts/debug-output/simple-box.step"
+  mkdirSync("debug-output", { recursive: true })
+  const outputPath = "debug-output/simple-box.step"
   writeFileSync(outputPath, stepText)
 
   console.log("STEP file written to debug-output/simple-box.step")
@@ -352,5 +370,12 @@ test("create a simple box", async () => {
 
   console.log("✓ STEP file validated successfully with occt-import-js")
   console.log(`  - Meshes: ${result.meshes.length}`)
-  console.log(`  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`)
+  console.log(
+    `  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`,
+  )
+
+  await expect(stepData).toMatchStepSnapshot(
+    import.meta.path,
+    "simple-white-box",
+  )
 })

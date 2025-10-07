@@ -25,9 +25,9 @@ export class StyledItem extends Entity {
     return new StyledItem(name, styles, item)
   }
   override toStep(): string {
-    return `STYLED_ITEM(${
-      stepStr(this.name)
-    },(${this.styles.join(",")}),${this.item})`
+    return `STYLED_ITEM(${stepStr(
+      this.name,
+    )},(${this.styles.join(",")}),${this.item})`
   }
 }
 

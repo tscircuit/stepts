@@ -5,9 +5,7 @@ export type OcctLinearUnit =
   | "inch"
   | "foot"
 
-export type OcctLinearDeflectionType =
-  | "bounding_box_ratio"
-  | "absolute_value"
+export type OcctLinearDeflectionType = "bounding_box_ratio" | "absolute_value"
 
 export interface OcctImportParams {
   linearUnit?: OcctLinearUnit

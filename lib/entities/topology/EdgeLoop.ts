@@ -23,9 +23,7 @@ export class EdgeLoop extends Entity {
     return new EdgeLoop(name, list)
   }
   override toStep(): string {
-    return `EDGE_LOOP(${
-      stepStr(this.name)
-    },(${this.edges.join(",")}))`
+    return `EDGE_LOOP(${stepStr(this.name)},(${this.edges.join(",")}))`
   }
 }
 

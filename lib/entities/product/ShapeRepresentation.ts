@@ -28,4 +28,7 @@ export class ShapeRepresentation extends Entity {
   }
 }
 
-register("SHAPE_REPRESENTATION", ShapeRepresentation.parse.bind(ShapeRepresentation))
+register(
+  "SHAPE_REPRESENTATION",
+  ShapeRepresentation.parse.bind(ShapeRepresentation),
+)

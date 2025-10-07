@@ -1,4 +1,4 @@
-import { writeFileSync } from "node:fs"
+import { mkdirSync, writeFileSync } from "node:fs"
 import { expect, test } from "bun:test"
 import {
   AdvancedBrepShapeRepresentation,
@@ -47,7 +47,9 @@ test("create a box with a square hole through it", async () => {
 
   // Product structure (required for STEP validation)
   const appContext = repo.add(
-    new ApplicationContext("core data for automotive mechanical design processes"),
+    new ApplicationContext(
+      "core data for automotive mechanical design processes",
+    ),
   )
   repo.add(
     new ApplicationProtocolDefinition(
@@ -57,9 +59,13 @@ test("create a box with a square hole through it", async () => {
       appContext,
     ),
   )
-  const productContext = repo.add(new ProductContext("", appContext, "mechanical"))
+  const productContext = repo.add(
+    new ProductContext("", appContext, "mechanical"),
+  )
   const product = repo.add(
-    new Product("box-with-square-hole", "box-with-square-hole", "", [productContext]),
+    new Product("box-with-square-hole", "box-with-square-hole", "", [
+      productContext,
+    ]),
   )
   const productDefContext = repo.add(
     new ProductDefinitionContext("part definition", appContext, "design"),
@@ -70,17 +76,25 @@ test("create a box with a square hole through it", async () => {
   const productDef = repo.add(
     new ProductDefinition("", "", productDefFormation, productDefContext),
   )
-  const productDefShape = repo.add(new ProductDefinitionShape("", "", productDef))
+  const productDefShape = repo.add(
+    new ProductDefinitionShape("", "", productDef),
+  )
 
   // Representation context
   const lengthUnit = repo.add(
-    new Unknown("", ["( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )"]),
+    new Unknown("", [
+      "( LENGTH_UNIT() NAMED_UNIT(*) SI_UNIT(.MILLI.,.METRE.) )",
+    ]),
   )
   const angleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) PLANE_ANGLE_UNIT() SI_UNIT($,.RADIAN.) )",
+    ]),
   )
   const solidAngleUnit = repo.add(
-    new Unknown("", ["( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )"]),
+    new Unknown("", [
+      "( NAMED_UNIT(*) SI_UNIT($,.STERADIAN.) SOLID_ANGLE_UNIT() )",
+    ]),
   )
   const uncertainty = repo.add(
     new Unknown("UNCERTAINTY_MEASURE_WITH_UNIT", [
@@ -139,7 +153,10 @@ test("create a box with a square hole through it", async () => {
   )
 
   // Helper to create an edge between two vertices
-  function createEdge(v1: Ref<VertexPoint>, v2: Ref<VertexPoint>): Ref<EdgeCurve> {
+  function createEdge(
+    v1: Ref<VertexPoint>,
+    v2: Ref<VertexPoint>,
+  ): Ref<EdgeCurve> {
     const p1 = v1.resolve(repo).pnt.resolve(repo)
     const p2 = v2.resolve(repo).pnt.resolve(repo)
     const dir = repo.add(
@@ -190,7 +207,12 @@ test("create a box with a square hole through it", async () => {
 
   // Bottom face (z=0, normal pointing down) - no hole
   const bottomFrame = repo.add(
-    new Axis2Placement3D("", origin, repo.add(new Direction("", 0, 0, -1)), xDir),
+    new Axis2Placement3D(
+      "",
+      origin,
+      repo.add(new Direction("", 0, 0, -1)),
+      xDir,
+    ),
   )
   const bottomPlane = repo.add(new Plane("", bottomFrame))
   const bottomLoop = repo.add(
@@ -353,7 +375,12 @@ test("create a box with a square hole through it", async () => {
   // Bottom hole face (parallel to bottom, z=holeOffset)
   const holeBottomOrigin = repo.add(new CartesianPoint("", 0, 0, holeOffset))
   const holeBottomFrame = repo.add(
-    new Axis2Placement3D("", holeBottomOrigin, repo.add(new Direction("", 0, 0, -1)), xDir),
+    new Axis2Placement3D(
+      "",
+      holeBottomOrigin,
+      repo.add(new Direction("", 0, 0, -1)),
+      xDir,
+    ),
   )
   const holeBottomPlane = repo.add(new Plane("", holeBottomFrame))
   const holeBottomLoop = repo.add(
@@ -374,7 +401,9 @@ test("create a box with a square hole through it", async () => {
   )
 
   // Top hole face (parallel to top, z=holeOffset+holeSize)
-  const holeTopOrigin = repo.add(new CartesianPoint("", 0, 0, holeOffset + holeSize))
+  const holeTopOrigin = repo.add(
+    new CartesianPoint("", 0, 0, holeOffset + holeSize),
+  )
   const holeTopFrame = repo.add(
     new Axis2Placement3D("", holeTopOrigin, zDir, xDir),
   )
@@ -399,7 +428,12 @@ test("create a box with a square hole through it", async () => {
   // Left hole face (parallel to left, x=holeOffset)
   const holeLeftOrigin = repo.add(new CartesianPoint("", holeOffset, 0, 0))
   const holeLeftFrame = repo.add(
-    new Axis2Placement3D("", holeLeftOrigin, repo.add(new Direction("", -1, 0, 0)), yDir),
+    new Axis2Placement3D(
+      "",
+      holeLeftOrigin,
+      repo.add(new Direction("", -1, 0, 0)),
+      yDir,
+    ),
   )
   const holeLeftPlane = repo.add(new Plane("", holeLeftFrame))
   const holeLeftLoop = repo.add(
@@ -420,7 +454,9 @@ test("create a box with a square hole through it", async () => {
   )
 
   // Right hole face (parallel to right, x=holeOffset+holeSize)
-  const holeRightOrigin = repo.add(new CartesianPoint("", holeOffset + holeSize, 0, 0))
+  const holeRightOrigin = repo.add(
+    new CartesianPoint("", holeOffset + holeSize, 0, 0),
+  )
   const holeRightFrame = repo.add(
     new Axis2Placement3D("", holeRightOrigin, xDir, yDir),
   )
@@ -480,7 +516,11 @@ test("create a box with a square hole through it", async () => {
 
   // Shape representation
   const shapeRep = repo.add(
-    new AdvancedBrepShapeRepresentation("box-with-square-hole", [solid], geomContext),
+    new AdvancedBrepShapeRepresentation(
+      "box-with-square-hole",
+      [solid],
+      geomContext,
+    ),
   )
   repo.add(new ShapeDefinitionRepresentation(productDefShape, shapeRep))
 
@@ -488,7 +528,8 @@ test("create a box with a square hole through it", async () => {
   const stepText = repo.toPartFile({ name: "box-with-square-hole" })
 
   // Write to debug-output
-  const outputPath = "/Users/seve/w/tsc/stepts/debug-output/box-with-square-hole.step"
+  mkdirSync("debug-output", { recursive: true })
+  const outputPath = "debug-output/box-with-square-hole.step"
   writeFileSync(outputPath, stepText)
 
   console.log("STEP file written to debug-output/box-with-square-hole.step")
@@ -508,5 +549,12 @@ test("create a box with a square hole through it", async () => {
 
   console.log("✓ STEP file validated successfully with occt-import-js")
   console.log(`  - Meshes: ${result.meshes.length}`)
-  console.log(`  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`)
+  console.log(
+    `  - Triangles: ${result.meshes.reduce((sum, m) => sum + m.index.array.length / 3, 0)}`,
+  )
+
+  await expect(stepData).toMatchStepSnapshot(
+    import.meta.path,
+    "box-with-square-hole",
+  )
 })

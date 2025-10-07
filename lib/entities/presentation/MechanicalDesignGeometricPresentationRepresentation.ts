@@ -28,9 +28,9 @@ export class MechanicalDesignGeometricPresentationRepresentation extends Entity 
     )
   }
   toStep(): string {
-    return `MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION(${
-      stepStr(this.name)
-    },(${this.items.join(",")}),${this.contextOfItems})`
+    return `MECHANICAL_DESIGN_GEOMETRIC_PRESENTATION_REPRESENTATION(${stepStr(
+      this.name,
+    )},(${this.items.join(",")}),${this.contextOfItems})`
   }
 }
 

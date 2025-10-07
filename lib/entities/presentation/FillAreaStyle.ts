@@ -22,9 +22,7 @@ export class FillAreaStyle extends Entity {
     return new FillAreaStyle(a[0] === "$" ? "" : ctx.parseString(a[0]), items)
   }
   override toStep(): string {
-    return `FILL_AREA_STYLE(${
-      stepStr(this.name)
-    },(${this.items.join(",")}))`
+    return `FILL_AREA_STYLE(${stepStr(this.name)},(${this.items.join(",")}))`
   }
 }
 
