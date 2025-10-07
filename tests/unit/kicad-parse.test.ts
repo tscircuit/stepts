@@ -2,7 +2,7 @@ import { expect, test } from "bun:test"
 import { readFileSync } from "fs"
 import { parseRepository } from "../../lib"
 
-test("parse KiCad STEP file", () => {
+test("parse KiCad STEP file", async () => {
   const stepText = readFileSync(
     "tests/roundtrip/kicadoutput01/kicadoutput01.step.txt",
     "utf-8",
@@ -35,4 +35,7 @@ test("parse KiCad STEP file", () => {
   console.log(`\nUnknown entities: ${unknownCount}`)
 
   expect(entries.length).toBeGreaterThan(0)
-})
+
+  // Visual snapshot of the full KiCad STEP scene
+  await expect(stepText).toMatchStepSnapshot(import.meta.path, "kicadoutput01")
+}, 60000)
