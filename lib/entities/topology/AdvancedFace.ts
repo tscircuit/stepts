@@ -2,14 +2,14 @@ import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
 import { register } from "../../parse/registry"
-import type { Surface } from "../../types/topology"
+import type { AnyFaceBound, Surface } from "../../types/topology"
 import type { FaceOuterBound } from "./FaceOuterBound"
 
 export class AdvancedFace extends Entity {
   readonly type = "ADVANCED_FACE"
   constructor(
     public name: string,
-    public bounds: Ref<FaceOuterBound>[],
+    public bounds: Ref<AnyFaceBound>[],
     public surface: Ref<Surface>,
     public sameSense: boolean,
   ) {
@@ -21,7 +21,7 @@ export class AdvancedFace extends Entity {
       .replace(/^\(|\)$/g, "")
       .split(",")
       .filter(Boolean)
-      .map((tok) => ctx.parseRef<FaceOuterBound>(tok.trim()))
+      .map((tok) => ctx.parseRef<AnyFaceBound>(tok.trim()))
     const surf = ctx.parseRef<Surface>(a[2])
     const ss = a[3].trim() === ".T."
     return new AdvancedFace(name, bounds, surf, ss)
