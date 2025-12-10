@@ -45,3 +45,5 @@ __pycache__
 
 # Snapshot diff files
 *.diff.png
+kicad-models
+test-assets/do-not-commit
