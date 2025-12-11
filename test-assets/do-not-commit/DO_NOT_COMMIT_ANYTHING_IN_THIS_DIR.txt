@@ -1,0 +1,2 @@
+Do not commit anything in this directory, it's for customer reproductions etc. Put files in here
+that you want to test against but don't want committed, then run scripts/run-asset-validation.ts
