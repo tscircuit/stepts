@@ -17,9 +17,9 @@ export class Product extends Entity {
     super()
   }
   static override parse(a: string[], ctx: ParseContext) {
-    const name = ctx.parseString(a[0])
-    const id = ctx.parseString(a[1])
-    const description = ctx.parseString(a[2])
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
+    const id = a[1] === "$" ? "" : ctx.parseString(a[1])
+    const description = a[2] === "$" ? "" : ctx.parseString(a[2])
     const refs = a[3]
       .replace(/^\(|\)$/g, "")
       .split(",")

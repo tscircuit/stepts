@@ -10,6 +10,8 @@ export { Line } from "./entities/geometry/Line"
 export { Plane } from "./entities/geometry/Plane"
 export { ToroidalSurface } from "./entities/geometry/ToroidalSurface"
 export { Vector } from "./entities/geometry/Vector"
+export { Ellipse } from "./entities/geometry/Ellipse"
+export { ConicalSurface } from "./entities/geometry/ConicalSurface"
 // Presentation entities
 export { ColourRgb } from "./entities/presentation/ColourRgb"
 export { FillAreaStyle } from "./entities/presentation/FillAreaStyle"
