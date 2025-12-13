@@ -12,6 +12,8 @@ export { ToroidalSurface } from "./entities/geometry/ToroidalSurface"
 export { Vector } from "./entities/geometry/Vector"
 export { Ellipse } from "./entities/geometry/Ellipse"
 export { ConicalSurface } from "./entities/geometry/ConicalSurface"
+export { SphericalSurface } from "./entities/geometry/SphericalSurface"
+export { BSplineCurveWithKnots } from "./entities/geometry/BSplineCurveWithKnots"
 // Presentation entities
 export { ColourRgb } from "./entities/presentation/ColourRgb"
 export { FillAreaStyle } from "./entities/presentation/FillAreaStyle"
