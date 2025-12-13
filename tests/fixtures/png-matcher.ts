@@ -58,17 +58,23 @@ async function toMatchPngSnapshot(
     process.env["PNG_SNAPSHOT_AA_TOLERANCE"] ?? 4,
   )
 
+  // Note: looks-same doesn't allow 'strict' and 'tolerance' together
+  const looksSameOptions: any = {
+    ignoreCaret: true,
+    shouldCluster: true,
+    clustersSize: 10,
+  }
+  if (strict) {
+    looksSameOptions.strict = true
+  } else {
+    looksSameOptions.tolerance = tolerance
+    looksSameOptions.antialiasingTolerance = antialiasingTolerance
+  }
+
   const result: any = await looksSame(
     Buffer.from(received),
     Buffer.from(existingSnapshot),
-    {
-      strict,
-      tolerance,
-      antialiasingTolerance,
-      ignoreCaret: true,
-      shouldCluster: true,
-      clustersSize: 10,
-    },
+    looksSameOptions,
   )
 
   if (updateSnapshot) {
