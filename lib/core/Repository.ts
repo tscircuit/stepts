@@ -7,16 +7,21 @@ import { stepStr } from "./stepFormat"
 export class Repository {
   private map = new Map<EntityId, Entity>()
   private order: EntityId[] = [] // insertion/emit order
+  private maxId = 0 // track max id to avoid Math.max(...order) stack overflow
   schema: "AP214" | "AP242" = "AP214"
   units = { length: "MM", angle: "RAD" as const, solidAngle: "SR" as const }
 
   set(id: EntityId, e: Entity) {
-    if (!this.map.has(id)) this.order.push(id)
+    if (!this.map.has(id)) {
+      this.order.push(id)
+      if (id > this.maxId) this.maxId = id
+    }
     this.map.set(id, e)
   }
 
   add<T extends Entity>(e: T): Ref<T> {
-    const id = eid(this.order.length ? Math.max(...this.order) + 1 : 1)
+    this.maxId++
+    const id = eid(this.maxId)
     this.set(id, e)
     return new Ref<T>(id)
   }
