@@ -7,6 +7,38 @@ export interface RawEntityRow {
   args: string[]
 }
 
+const skipStepComment = (s: string, index: number): number => {
+  if (s[index] !== "/" || s[index + 1] !== "*") return index
+  const end = s.indexOf("*/", index + 2)
+  return end === -1 ? s.length : end + 2
+}
+
+/** Index of the entity-terminating semicolon, ignoring STRING and comment text. */
+export const findStepEntityTerminator = (s: string): number => {
+  let inStr = false
+  for (let i = 0; i < s.length; i++) {
+    if (!inStr) {
+      const afterComment = skipStepComment(s, i)
+      if (afterComment !== i) {
+        i = afterComment - 1
+        continue
+      }
+    }
+
+    if (s[i] === "'") {
+      if (inStr && s[i + 1] === "'") {
+        i++
+        continue
+      }
+      inStr = !inStr
+      continue
+    }
+
+    if (!inStr && s[i] === ";") return i
+  }
+  return -1
+}
+
 export function tokenizeSTEP(data: string): RawEntityRow[] {
   const entities: RawEntityRow[] = []
 
@@ -44,8 +76,8 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
     // Find the entity text between this start and next start
     const entityText = dataSection.substring(start.index, nextStart)
 
-    // Find the first semicolon - that's the end of this entity
-    const semiIndex = entityText.indexOf(";")
+    // Find the first semicolon outside STRING literals and /* comments */
+    const semiIndex = findStepEntityTerminator(entityText)
     if (semiIndex === -1) {
       throw new Error(
         `Could not find closing semicolon for entity #${start.id}`,
@@ -73,15 +105,17 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
       })
     } else {
       // Simple entity
-      const match = fullEntity.match(/#\d+\s*=\s*([A-Z0-9_]+)\s*\(([\s\S]*)\);/)
-      if (!match) {
+      const entityMatch = fullEntity.match(
+        /#\d+\s*=\s*([A-Z0-9_]+)\s*\(([\s\S]*)\);/,
+      )
+      if (!entityMatch) {
         throw new Error(
           `Could not parse entity: ${fullEntity.substring(0, 100)}`,
         )
       }
 
-      const type = match[1].trim()
-      const argsBody = match[2].trim()
+      const type = entityMatch[1].trim()
+      const argsBody = entityMatch[2].trim()
 
       const args = splitArgs(argsBody)
       entities.push({ id: eid(start.id), type, args })
@@ -91,15 +125,32 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
   return entities
 }
 
-// Splits top-level args respecting parentheses and quotes
+// Splits top-level args respecting parentheses, STEP strings, and comments
 export function splitArgs(s: string): string[] {
   const out: string[] = []
   let buf = ""
   let depth = 0
   let inStr = false
   for (let i = 0; i < s.length; i++) {
+    if (!inStr) {
+      const afterComment = skipStepComment(s, i)
+      if (afterComment !== i) {
+        i = afterComment - 1
+        continue
+      }
+    }
+
     const c = s[i]
-    if (c === "'" && s[i - 1] !== "\\") inStr = !inStr
+    if (c === "'") {
+      if (inStr && s[i + 1] === "'") {
+        buf += "''"
+        i++
+        continue
+      }
+      inStr = !inStr
+      buf += c
+      continue
+    }
     if (!inStr) {
       if (c === "(") depth++
       if (c === ")") depth--
