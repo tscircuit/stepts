@@ -1,19 +1,20 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
-import { fmtNum, stepStr } from "../../core/stepFormat"
+import { fmtLogical, fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { CartesianPoint } from "./CartesianPoint"
+import type { CartesianPoint2D } from "./CartesianPoint2D"
 
 export class BSplineCurveWithKnots extends Entity {
   readonly type = "B_SPLINE_CURVE_WITH_KNOTS"
   constructor(
     public name: string,
     public degree: number,
-    public controlPointsList: Ref<CartesianPoint>[],
+    public controlPointsList: Ref<CartesianPoint | CartesianPoint2D>[],
     public curveForm: string,
-    public closedCurve: boolean,
-    public selfIntersect: boolean,
+    public closedCurve: boolean | null,
+    public selfIntersect: boolean | null,
     public knotMultiplicities: number[],
     public knots: number[],
     public knotSpec: string,
@@ -27,10 +28,10 @@ export class BSplineCurveWithKnots extends Entity {
       .replace(/^\(|\)$/g, "")
       .split(",")
       .filter(Boolean)
-      .map((tok) => ctx.parseRef<CartesianPoint>(tok.trim()))
+      .map((tok) => ctx.parseRef<CartesianPoint | CartesianPoint2D>(tok.trim()))
     const curveForm = a[3].trim()
-    const closedCurve = a[4].trim() === ".T."
-    const selfIntersect = a[5].trim() === ".T."
+    const closedCurve = parseLogical(a[4])
+    const selfIntersect = parseLogical(a[5])
     const knotMults = a[6]
       .replace(/^\(|\)$/g, "")
       .split(",")
@@ -56,11 +57,24 @@ export class BSplineCurveWithKnots extends Entity {
   }
   toStep(): string {
     const cps = `(${this.controlPointsList.join(",")})`
-    const kms = `(${this.knotMultiplicities.map(fmtNum).join(",")})`
+    const kms = `(${this.knotMultiplicities.join(",")})`
     const ks = `(${this.knots.map(fmtNum).join(",")})`
-    const closed = this.closedCurve ? ".T." : ".F."
-    const self = this.selfIntersect ? ".T." : ".F."
+    const closed = fmtLogical(this.closedCurve)
+    const self = fmtLogical(this.selfIntersect)
     return `B_SPLINE_CURVE_WITH_KNOTS(${stepStr(this.name)},${this.degree},${cps},${this.curveForm},${closed},${self},${kms},${ks},${this.knotSpec})`
+  }
+}
+
+function parseLogical(token: string): boolean | null {
+  switch (token.trim()) {
+    case ".T.":
+      return true
+    case ".F.":
+      return false
+    case ".U.":
+      return null
+    default:
+      throw new Error(`Invalid STEP logical: ${token}`)
   }
 }
 

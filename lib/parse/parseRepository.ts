@@ -21,9 +21,9 @@ export function parseRepository(data: string): Repository {
       return Number(tok)
     },
     parseString(tok: string) {
-      const m = tok.match(/^'(.*)'$/)
-      if (!m) throw new Error(`Expected string: ${tok}`)
-      return m[1].replace(/''/g, "'")
+      if (!tok.startsWith("'") || !tok.endsWith("'"))
+        throw new Error(`Expected string: ${tok}`)
+      return tok.slice(1, -1).replaceAll("''", "'")
     },
   }
 

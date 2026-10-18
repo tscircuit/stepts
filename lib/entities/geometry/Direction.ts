@@ -2,6 +2,7 @@ import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import { fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
+import { Direction2D } from "./Direction2D"
 
 export class Direction extends Entity {
   readonly type = "DIRECTION"
@@ -19,7 +20,8 @@ export class Direction extends Entity {
       .replace(/^\(|\)$/g, "")
       .split(",")
       .map(ctx.parseNumber)
-    return new Direction(name, comps[0], comps[1], comps[2] ?? 0)
+    if (comps.length === 2) return new Direction2D(name, comps[0], comps[1])
+    return new Direction(name, comps[0], comps[1], comps[2])
   }
   override toStep(): string {
     return `DIRECTION(${stepStr(this.name)},(${fmtNum(this.dx)},${fmtNum(
