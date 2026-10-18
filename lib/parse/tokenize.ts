@@ -1,6 +1,5 @@
 import { type EntityId, eid } from "../core/EntityId"
 
-// Split: "#12 = ENTITY_NAME(arg1,arg2,...);"
 export interface RawEntityRow {
   id: EntityId
   type: string
@@ -9,108 +8,107 @@ export interface RawEntityRow {
 
 export function tokenizeSTEP(data: string): RawEntityRow[] {
   const entities: RawEntityRow[] = []
+  let inData = false
+  let foundData = false
 
-  // Remove header and footer, get just the DATA section
-  const dataStart = data.indexOf("DATA;")
-  const dataEnd = data.indexOf("ENDSEC;", dataStart)
-  if (dataStart === -1 || dataEnd === -1) {
-    throw new Error("Could not find DATA section in STEP file")
-  }
-
-  const dataSection = data.substring(dataStart + 5, dataEnd)
-
-  // Split into entity strings by finding #NUM = pattern
-  // We need to handle multi-line entities and complex multi-inheritance entities
-  const entityPattern = /#(\d+)\s*=\s*/g
-  let match: RegExpExecArray | null
-  const entityStarts: { index: number; id: number }[] = []
-
-  // Find all entity starts
-  while ((match = entityPattern.exec(dataSection)) !== null) {
-    entityStarts.push({
-      index: match.index,
-      id: parseInt(match[1], 10),
-    })
-  }
-
-  // Extract each entity by finding the closing semicolon
-  for (let i = 0; i < entityStarts.length; i++) {
-    const start = entityStarts[i]
-    const nextStart =
-      i + 1 < entityStarts.length
-        ? entityStarts[i + 1].index
-        : dataSection.length
-
-    // Find the entity text between this start and next start
-    const entityText = dataSection.substring(start.index, nextStart)
-
-    // Find the first semicolon - that's the end of this entity
-    const semiIndex = entityText.indexOf(";")
-    if (semiIndex === -1) {
-      throw new Error(
-        `Could not find closing semicolon for entity #${start.id}`,
-      )
+  for (const statement of splitTopLevel(data, ";")) {
+    const open = statement.indexOf("(")
+    const keyword = (open < 0 ? statement : statement.slice(0, open)).trim()
+    if (keyword === "DATA") {
+      inData = true
+      foundData = true
+      continue
     }
+    if (statement === "ENDSEC") {
+      inData = false
+      continue
+    }
+    if (!inData) continue
 
-    const fullEntity = entityText.substring(0, semiIndex + 1)
-
-    // Extract the type and arguments
-    // Pattern: #NUM = TYPE(args); or #NUM = ( TYPE1(...) TYPE2(...) );
-    // First check if it's a complex multi-inheritance entity
-    if (fullEntity.match(/#\d+\s*=\s*\(/)) {
-      // Complex entity: treat the whole thing as Unknown for now
-      const complexMatch = fullEntity.match(/#\d+\s*=\s*\(([\s\S]*)\);/)
-      if (!complexMatch) {
-        throw new Error(
-          `Could not parse complex entity: ${fullEntity.substring(0, 100)}`,
-        )
-      }
-      // Store as type "Unknown" with the complex structure in args[0]
-      entities.push({
-        id: eid(start.id),
-        type: "Unknown",
-        args: [`( ${complexMatch[1].trim()} )`],
-      })
+    const equals = statement.indexOf("=")
+    const reference = statement.slice(0, equals).trim()
+    if (equals < 0 || !/^#\d+$/.test(reference)) {
+      throw new Error(`Invalid STEP entity reference: ${reference}`)
+    }
+    const id = eid(Number(reference.slice(1)))
+    const body = statement.slice(equals + 1).trim()
+    const argsStart = body.indexOf("(")
+    if (argsStart < 0 || !body.endsWith(")")) {
+      throw new Error(`Invalid STEP entity body for ${reference}`)
+    }
+    const argsBody = body.slice(argsStart + 1, -1).trim()
+    if (argsStart === 0) {
+      entities.push({ id, type: "Unknown", args: [`( ${argsBody} )`] })
     } else {
-      // Simple entity
-      const match = fullEntity.match(/#\d+\s*=\s*([A-Z0-9_]+)\s*\(([\s\S]*)\);/)
-      if (!match) {
-        throw new Error(
-          `Could not parse entity: ${fullEntity.substring(0, 100)}`,
-        )
+      const type = body.slice(0, argsStart).trim()
+      if (!/^[A-Z][A-Z0-9_]*$/.test(type)) {
+        throw new Error(`Invalid STEP entity type: ${type}`)
       }
-
-      const type = match[1].trim()
-      const argsBody = match[2].trim()
-
-      const args = splitArgs(argsBody)
-      entities.push({ id: eid(start.id), type, args })
+      entities.push({ id, type, args: splitArgs(argsBody) })
     }
   }
 
+  if (!foundData) throw new Error("Could not find DATA section in STEP file")
+  if (inData) throw new Error("Unterminated DATA section in STEP file")
   return entities
 }
 
-// Splits top-level args respecting parentheses and quotes
-export function splitArgs(s: string): string[] {
-  const out: string[] = []
-  let buf = ""
+export function splitArgs(source: string): string[] {
+  return splitTopLevel(source, ",")
+}
+
+/** Split STEP syntax only outside strings, comments and nested lists. */
+function splitTopLevel(source: string, delimiter: ";" | ","): string[] {
+  const values: string[] = []
+  let buffer = ""
   let depth = 0
-  let inStr = false
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i]
-    if (c === "'" && s[i - 1] !== "\\") inStr = !inStr
-    if (!inStr) {
-      if (c === "(") depth++
-      if (c === ")") depth--
-      if (c === "," && depth === 0) {
-        out.push(buf.trim())
-        buf = ""
-        continue
+  let inString = false
+  let inComment = false
+
+  for (let i = 0; i < source.length; i++) {
+    const char = source[i]
+    const next = source[i + 1]
+    if (inComment) {
+      if (char === "*" && next === "/") {
+        inComment = false
+        i++
       }
+      continue
     }
-    buf += c
+    if (inString) {
+      buffer += char
+      if (char === "'") {
+        if (next === "'") {
+          buffer += next
+          i++
+        } else inString = false
+      }
+      continue
+    }
+    if (char === "/" && next === "*") {
+      inComment = true
+      buffer += " "
+      i++
+      continue
+    }
+    if (char === "'") inString = true
+    if (char === "(") depth++
+    if (char === ")") {
+      depth--
+      if (depth < 0) throw new Error("Unexpected closing parenthesis in STEP")
+    }
+    if (char === delimiter && depth === 0) {
+      values.push(buffer.trim())
+      buffer = ""
+    } else buffer += char
   }
-  if (buf.trim()) out.push(buf.trim())
-  return out
+
+  if (inString) throw new Error("Unterminated string in STEP")
+  if (inComment) throw new Error("Unterminated comment in STEP")
+  if (depth !== 0) throw new Error("Unterminated parenthesis in STEP")
+  if (buffer.trim()) {
+    if (delimiter === ";") throw new Error("Missing closing semicolon in STEP")
+    values.push(buffer.trim())
+  }
+  return values
 }

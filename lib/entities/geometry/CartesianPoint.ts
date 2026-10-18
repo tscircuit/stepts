@@ -2,6 +2,7 @@ import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import { fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
+import { CartesianPoint2D } from "./CartesianPoint2D"
 
 export class CartesianPoint extends Entity {
   readonly type = "CARTESIAN_POINT"
@@ -19,7 +20,9 @@ export class CartesianPoint extends Entity {
       .replace(/^\(|\)$/g, "")
       .split(",")
       .map(ctx.parseNumber)
-    return new CartesianPoint(name, coords[0], coords[1], coords[2] ?? 0)
+    if (coords.length === 2)
+      return new CartesianPoint2D(name, coords[0], coords[1])
+    return new CartesianPoint(name, coords[0], coords[1], coords[2])
   }
   override toStep(): string {
     return `CARTESIAN_POINT(${stepStr(this.name)},(${fmtNum(this.x)},${fmtNum(
