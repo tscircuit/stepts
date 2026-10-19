@@ -7,7 +7,11 @@ export interface RawEntityRow {
 }
 
 export function tokenizeSTEP(data: string): RawEntityRow[] {
-  const entities: RawEntityRow[] = []
+  return Array.from(iterateSTEP(data))
+}
+
+/** Read one entity at a time without retaining all raw statements and rows. */
+export function* iterateSTEP(data: string): Generator<RawEntityRow> {
   let inData = false
   let foundData = false
 
@@ -38,29 +42,31 @@ export function tokenizeSTEP(data: string): RawEntityRow[] {
     }
     const argsBody = body.slice(argsStart + 1, -1).trim()
     if (argsStart === 0) {
-      entities.push({ id, type: "Unknown", args: [`( ${argsBody} )`] })
+      yield { id, type: "Unknown", args: [`( ${argsBody} )`] }
     } else {
       const type = body.slice(0, argsStart).trim()
       if (!/^[A-Z][A-Z0-9_]*$/.test(type)) {
         throw new Error(`Invalid STEP entity type: ${type}`)
       }
-      entities.push({ id, type, args: splitArgs(argsBody) })
+      yield { id, type, args: splitArgs(argsBody) }
     }
   }
 
   if (!foundData) throw new Error("Could not find DATA section in STEP file")
   if (inData) throw new Error("Unterminated DATA section in STEP file")
-  return entities
 }
 
 export function splitArgs(source: string): string[] {
-  return splitTopLevel(source, ",")
+  return Array.from(splitTopLevel(source, ","))
 }
 
 /** Split STEP syntax only outside strings, comments and nested lists. */
-function splitTopLevel(source: string, delimiter: ";" | ","): string[] {
-  const values: string[] = []
-  let buffer = ""
+function* splitTopLevel(
+  source: string,
+  delimiter: ";" | ",",
+): Generator<string> {
+  let start = 0
+  let prefix = ""
   let depth = 0
   let inString = false
   let inComment = false
@@ -72,14 +78,13 @@ function splitTopLevel(source: string, delimiter: ";" | ","): string[] {
       if (char === "*" && next === "/") {
         inComment = false
         i++
+        start = i + 1
       }
       continue
     }
     if (inString) {
-      buffer += char
       if (char === "'") {
         if (next === "'") {
-          buffer += next
           i++
         } else inString = false
       }
@@ -87,7 +92,7 @@ function splitTopLevel(source: string, delimiter: ";" | ","): string[] {
     }
     if (char === "/" && next === "*") {
       inComment = true
-      buffer += " "
+      prefix += source.slice(start, i) + " "
       i++
       continue
     }
@@ -98,17 +103,18 @@ function splitTopLevel(source: string, delimiter: ";" | ","): string[] {
       if (depth < 0) throw new Error("Unexpected closing parenthesis in STEP")
     }
     if (char === delimiter && depth === 0) {
-      values.push(buffer.trim())
-      buffer = ""
-    } else buffer += char
+      yield (prefix + source.slice(start, i)).trim()
+      prefix = ""
+      start = i + 1
+    }
   }
 
   if (inString) throw new Error("Unterminated string in STEP")
   if (inComment) throw new Error("Unterminated comment in STEP")
   if (depth !== 0) throw new Error("Unterminated parenthesis in STEP")
-  if (buffer.trim()) {
+  const tail = (prefix + source.slice(start)).trim()
+  if (tail) {
     if (delimiter === ";") throw new Error("Missing closing semicolon in STEP")
-    values.push(buffer.trim())
+    yield tail
   }
-  return values
 }

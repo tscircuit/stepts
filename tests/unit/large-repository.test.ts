@@ -1,5 +1,11 @@
 import { expect, test } from "bun:test"
-import { CartesianPoint, Direction, eid, Repository } from "../../lib"
+import {
+  CartesianPoint,
+  Direction,
+  eid,
+  Repository,
+  parseRepository,
+} from "../../lib"
 
 /**
  * This test verifies that Repository can handle a large number of entities
@@ -34,4 +40,15 @@ test("repository handles large number of entities without stack overflow", () =>
   // Verify we can still add more entities after the large batch
   const newRef = repo.add(new CartesianPoint("", 999, 999, 999))
   expect(Number(newRef.id)).toBe(entityCount + 1)
+
+  const output = repo.toPartFile({ name: "large repository" })
+  const roundTrip = parseRepository(output)
+  expect(roundTrip.entries().map(([id]) => id)).toEqual(
+    repo.entries().map(([id]) => id),
+  )
+  for (const [id, entity] of repo.entries()) {
+    if (roundTrip.get(id)?.toStep(roundTrip) !== entity.toStep(repo)) {
+      throw new Error(`Entity #${id} changed during serialization`)
+    }
+  }
 })

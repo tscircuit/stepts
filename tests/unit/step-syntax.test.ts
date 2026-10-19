@@ -65,6 +65,7 @@ test.each([
   ],
 ])("reject malformed STEP: %s", (source, message) => {
   expect(() => tokenizeSTEP(source)).toThrow(message)
+  expect(() => parseRepository(source)).toThrow(message)
 })
 
 test("STEP reals use valid mantissas and exponents", () => {
@@ -118,4 +119,21 @@ ENDSEC;`
   expect(
     roundTripped.entries().map(([, entity]) => entity.toStep(roundTripped)),
   ).toEqual(entities.map((entity) => entity.toStep(repo)))
+})
+
+test("comments between slices preserve adjacent arguments and statements", () => {
+  const source = `DATA; /* first */ /* second */
+#1=/* before type */CARTESIAN_POINT(/* name */'µ,;''sensor',
+(/* x */1./* after x */,/* y */2.,3.)); /* after statement */
+#2=DIRECTION('',(0.,0.,1.)); /* before end */ENDSEC; /* trailing */`
+  const repo = parseRepository(source)
+  expect(repo.entries()).toHaveLength(2)
+  const point = repo.get(repo.entries()[0][0]) as CartesianPoint
+  expect([point.name, point.x, point.y, point.z]).toEqual([
+    "µ,;'sensor",
+    1,
+    2,
+    3,
+  ])
+  expect(splitArgs("/* only a comment */")).toEqual([])
 })
