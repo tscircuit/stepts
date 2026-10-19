@@ -27,5 +27,8 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Test release guards without publishing
+        run: node --test .github/scripts/release-guard.test.cjs
+
       - name: Run tests
         run: bun test
