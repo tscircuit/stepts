@@ -4,16 +4,53 @@ on:
   push:
     branches:
       - main
+    # Workflow-only changes (including this migration) must never publish.
+    paths-ignore:
+      - ".github/**"
   workflow_dispatch:
+    inputs:
+      operation:
+        type: choice
+        description: Explicitly select a release operation
+        default: none
+        options:
+          - none
+          - release
+          - recover-0.0.5
+      confirmation:
+        type: string
+        description: Type "publish stepts@0.0.5" for recovery or "release next version"
+        default: ""
+
+concurrency:
+  group: npm-release
+  cancel-in-progress: false
 
 env:
   UPSTREAM_REPOS: "" # comma-separated list, e.g. "eval,tscircuit,docs"
   UPSTREAM_PACKAGES_TO_UPDATE: "" # comma-separated list, e.g. "@tscircuit/core,@tscircuit/protos"
 
 jobs:
+  select-operation:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.guard.outputs.mode }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - id: guard
+        run: node .github/scripts/release-guard.cjs
+
   publish:
     runs-on: ubuntu-latest
-    if: ${{ !(github.event_name == 'push' && startsWith(github.event.head_commit.message, 'v')) }}
+    permissions:
+      contents: read
+      id-token: write
+    needs: select-operation
+    if: needs.select-operation.outputs.mode == 'release'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -22,16 +59,17 @@ jobs:
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org/
+      # Trusted publishing requires npm >= 11.5.1.
+      - run: npm install -g npm@11
       - run: npm install -g pver
       - run: bun install --frozen-lockfile
       - run: bun run build
       - run: pver release --no-push-main
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.TSCIRCUIT_BOT_GITHUB_TOKEN }}
 
       - name: Get package version
@@ -42,7 +80,7 @@ jobs:
 
       - name: Create Pull Request
         id: create-pr
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "chore: bump version to ${{ steps.package-version.outputs.version }}"
           title: "chore: bump version to ${{ steps.package-version.outputs.version }}"
@@ -75,3 +113,45 @@ jobs:
       #           -d "{\"ref\":\"main\",\"inputs\":{\"package_names\":\"${{ env.UPSTREAM_PACKAGES_TO_UPDATE }}\"}}"
       #       fi
       #     done
+
+  recover-0-0-5:
+    needs: select-operation
+    if: needs.select-operation.outputs.mode == 'recovery'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: f159444d7615ccabdfd53a7c8b06f9688675e577
+          persist-credentials: false
+      - name: Verify immutable recovery source
+        run: |
+          test "$(git rev-parse HEAD)" = f159444d7615ccabdfd53a7c8b06f9688675e577
+          test "$(git ls-remote origin refs/tags/v0.0.5 | cut -f1)" = f159444d7615ccabdfd53a7c8b06f9688675e577
+          node -e 'const p = require("./package.json"); if (p.name !== "stepts" || p.version !== "0.0.5") process.exit(1)'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org/
+      - run: npm install -g npm@11
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      - run: bun test
+      - name: Verify registry state and publish existing version
+        run: |
+          # Fetch the whole public package: network/HTTP/JSON failures stop the run.
+          # An npm view failure alone is not proof that a version is absent.
+          curl --fail --silent --show-error https://registry.npmjs.org/stepts > "$RUNNER_TEMP/stepts-registry.json"
+          node - "$RUNNER_TEMP/stepts-registry.json" <<'NODE'
+          const fs = require("node:fs")
+          const p = JSON.parse(fs.readFileSync(process.argv[2], "utf8"))
+          if (p.name !== "stepts" || typeof p.versions !== "object" || p.versions === null || !Object.hasOwn(p.versions, "0.0.4") || Object.hasOwn(p.versions, "0.0.5") || p["dist-tags"]?.latest !== "0.0.4") {
+            throw new Error("Registry state changed; recovery requires absent 0.0.5 and latest 0.0.4")
+          }
+          NODE
+          npm publish
