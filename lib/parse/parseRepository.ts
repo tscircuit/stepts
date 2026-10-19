@@ -5,7 +5,7 @@ import { Ref } from "../core/Ref"
 import { Repository } from "../core/Repository"
 import { Unknown } from "../entities/Unknown"
 import { getParser } from "./registry"
-import { tokenizeSTEP } from "./tokenize"
+import { iterateSTEP } from "./tokenize"
 
 // Build a repo from raw STEP data
 export function parseRepository(data: string): Repository {
@@ -28,7 +28,7 @@ export function parseRepository(data: string): Repository {
   }
 
   // first pass: instantiate classes with raw args; put into repo
-  for (const row of tokenizeSTEP(data)) {
+  for (const row of iterateSTEP(data)) {
     const parser = getParser(row.type)
     if (!parser) {
       // store Unknown as a passthrough for round-trip

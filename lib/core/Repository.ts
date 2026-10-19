@@ -3,6 +3,8 @@ import { type EntityId, eid } from "./EntityId"
 import { Ref } from "./Ref"
 import { stepStr } from "./stepFormat"
 
+const STEP_LINES_PER_CHUNK = 1024
+
 // Repository manages ids, storage, and emission
 export class Repository {
   private map = new Map<EntityId, Entity>()
@@ -52,8 +54,17 @@ export class Repository {
       "ENDSEC;",
       "DATA;",
     ]
-    const data = this.entries().map(([id, e]) => `#${id} = ${e.toStep(this)};`)
-    const ftr = ["ENDSEC;", "END-ISO-10303-21;"]
-    return [...hdr, ...data, ...ftr].join("\n")
+    const chunks: string[] = []
+    let lines = hdr
+    for (const id of this.order) {
+      lines.push(`#${id} = ${this.map.get(id)!.toStep(this)};`)
+      if (lines.length >= STEP_LINES_PER_CHUNK) {
+        chunks.push(lines.join("\n"))
+        lines = []
+      }
+    }
+    lines.push("ENDSEC;", "END-ISO-10303-21;")
+    chunks.push(lines.join("\n"))
+    return chunks.join("\n")
   }
 }
