@@ -14,8 +14,14 @@ export class Unknown extends Entity {
     if (this.args.length === 1 && this.args[0].startsWith("( ")) {
       // Complex entity: output multi-line format for better compatibility
       const content = this.args[0].slice(2, -2).trim() // Remove "( " and " )"
-      const parts = content.split(/\s+(?=[A-Z_])/g) // Split on uppercase entity names
-      return `(\n${parts.join("\n")}\n)`
+      // Consume complete comments and strings, including doubled apostrophes,
+      // before replacing whitespace between entity names with line breaks.
+      const formatted = content.replace(
+        /\/\*[\s\S]*?\*\/|'(?:''|[^'])*'|\s+(?=[A-Z_])/g,
+        (part) =>
+          part.startsWith("/*") || part.startsWith("'") ? part : "\n",
+      )
+      return `(\n${formatted}\n)`
     }
     // Simple unknown entity
     return `${this.type}(${this.args.join(",")})`
