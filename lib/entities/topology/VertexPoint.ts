@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { CartesianPoint } from "../geometry/CartesianPoint"
 
@@ -17,7 +18,7 @@ export class VertexPoint extends Entity {
     return new VertexPoint(name, ctx.parseRef<CartesianPoint>(a[1]))
   }
   toStep(): string {
-    return `VERTEX_POINT(${this.name ? `'${this.name}'` : "''"},${this.pnt})`
+    return `VERTEX_POINT(${stepStr(this.name)},${this.pnt})`
   }
 }
 

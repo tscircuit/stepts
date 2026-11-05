@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { EdgeLoop } from "./EdgeLoop"
 
@@ -21,7 +22,7 @@ export class FaceOuterBound extends Entity {
     )
   }
   override toStep(): string {
-    return `FACE_OUTER_BOUND('${this.name}',${this.bound},${this.sameSense ? ".T." : ".F."})`
+    return `FACE_OUTER_BOUND(${stepStr(this.name)},${this.bound},${this.sameSense ? ".T." : ".F."})`
   }
 }
 

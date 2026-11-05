@@ -1,7 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
-import { fmtNum } from "../../core/stepFormat"
+import { fmtNum, stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { Axis2Placement3D } from "./Axis2Placement3D"
 
@@ -21,7 +21,7 @@ export class Circle extends Entity {
     return new Circle(name, pl, r)
   }
   toStep(): string {
-    return `CIRCLE(${this.name ? `'${this.name}'` : "''"},${this.placement},${fmtNum(this.radius)})`
+    return `CIRCLE(${stepStr(this.name)},${this.placement},${fmtNum(this.radius)})`
   }
 }
 
