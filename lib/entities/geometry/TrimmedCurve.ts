@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { CartesianPoint } from "./CartesianPoint"
 import type { Circle } from "./Circle"
@@ -39,7 +40,7 @@ export class TrimmedCurve extends Entity {
   }
 
   toStep(): string {
-    return `TRIMMED_CURVE(${this.name ? `'${this.name}'` : "''"},${this.basisCurve},(${this.trim1}),(${this.trim2}),${this.senseAgreement ? ".T." : ".F."},.${this.masterRepresentation}.)`
+    return `TRIMMED_CURVE(${stepStr(this.name)},${this.basisCurve},(${this.trim1}),(${this.trim2}),${this.senseAgreement ? ".T." : ".F."},.${this.masterRepresentation}.)`
   }
 }
 

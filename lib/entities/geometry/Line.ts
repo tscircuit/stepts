@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { CartesianPoint } from "./CartesianPoint"
 import type { Vector } from "./Vector"
@@ -33,7 +34,7 @@ export class Line extends Entity {
     return new Line(name, p, vec)
   }
   toStep(): string {
-    return `LINE(${this.name ? `'${this.name}'` : "''"},${this.pnt},${this.dir})`
+    return `LINE(${stepStr(this.name)},${this.pnt},${this.dir})`
   }
 }
 

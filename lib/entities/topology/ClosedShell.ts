@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { AdvancedFace } from "./AdvancedFace"
 
@@ -22,7 +23,7 @@ export class ClosedShell extends Entity {
     return new ClosedShell(name, faces)
   }
   toStep(): string {
-    return `CLOSED_SHELL(${this.name ? `'${this.name}'` : "''"},(${this.faces.join(",")}))`
+    return `CLOSED_SHELL(${stepStr(this.name)},(${this.faces.join(",")}))`
   }
 }
 

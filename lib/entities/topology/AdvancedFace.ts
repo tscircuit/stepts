@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { AnyFaceBound, Surface } from "../../types/topology"
 import type { FaceOuterBound } from "./FaceOuterBound"
@@ -27,7 +28,7 @@ export class AdvancedFace extends Entity {
     return new AdvancedFace(name, bounds, surf, ss)
   }
   toStep(): string {
-    return `ADVANCED_FACE(${this.name ? `'${this.name}'` : "''"},(${this.bounds.join(",")}),${this.surface},${
+    return `ADVANCED_FACE(${stepStr(this.name)},(${this.bounds.join(",")}),${this.surface},${
       this.sameSense ? ".T." : ".F."
     })`
   }

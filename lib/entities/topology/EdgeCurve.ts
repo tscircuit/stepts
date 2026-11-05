@@ -1,6 +1,7 @@
 import { Entity } from "../../core/Entity"
 import type { ParseContext } from "../../core/ParseContext"
 import type { Ref } from "../../core/Ref"
+import { stepStr } from "../../core/stepFormat"
 import { register } from "../../parse/registry"
 import type { Curve } from "../../types/geometry"
 import type { VertexPoint } from "./VertexPoint"
@@ -25,7 +26,7 @@ export class EdgeCurve extends Entity {
     return new EdgeCurve(name, s, e, c, same)
   }
   toStep(): string {
-    return `EDGE_CURVE(${this.name ? `'${this.name}'` : "''"},${this.start},${this.end},${this.curve},${
+    return `EDGE_CURVE(${stepStr(this.name)},${this.start},${this.end},${this.curve},${
       this.sameSense ? ".T." : ".F."
     })`
   }
