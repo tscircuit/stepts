@@ -17,8 +17,8 @@ export class Product extends Entity {
     super()
   }
   static override parse(a: string[], ctx: ParseContext) {
-    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
-    const id = a[1] === "$" ? "" : ctx.parseString(a[1])
+    const id = a[0] === "$" ? "" : ctx.parseString(a[0])
+    const name = a[1] === "$" ? "" : ctx.parseString(a[1])
     const description = a[2] === "$" ? "" : ctx.parseString(a[2])
     const refs = a[3]
       .replace(/^\(|\)$/g, "")
@@ -28,7 +28,7 @@ export class Product extends Entity {
     return new Product(name, id, description, refs)
   }
   toStep(): string {
-    return `PRODUCT(${stepStr(this.name)},${stepStr(this.id)},${stepStr(this.description)},(${this.frameOfReference.join(",")}))`
+    return `PRODUCT(${stepStr(this.id)},${stepStr(this.name)},${stepStr(this.description)},(${this.frameOfReference.join(",")}))`
   }
 }
 
