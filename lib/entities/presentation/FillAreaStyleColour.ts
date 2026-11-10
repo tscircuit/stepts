@@ -15,7 +15,7 @@ export class FillAreaStyleColour extends Entity {
   }
   static override parse(a: string[], ctx: ParseContext) {
     return new FillAreaStyleColour(
-      ctx.parseString(a[0]),
+      a[0] === "$" ? "" : ctx.parseString(a[0]),
       ctx.parseRef<ColourRgb>(a[1]),
     )
   }

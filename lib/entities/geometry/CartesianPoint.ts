@@ -15,7 +15,7 @@ export class CartesianPoint extends Entity {
     super()
   }
   static override parse(a: string[], ctx: ParseContext) {
-    const name = ctx.parseString(a[0])
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     const coords = a[1]
       .replace(/^\(|\)$/g, "")
       .split(",")

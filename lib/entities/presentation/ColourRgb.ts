@@ -16,7 +16,7 @@ export class ColourRgb extends Entity {
   }
   static override parse(a: string[], ctx: ParseContext) {
     return new ColourRgb(
-      ctx.parseString(a[0]),
+      a[0] === "$" ? "" : ctx.parseString(a[0]),
       ctx.parseNumber(a[1]),
       ctx.parseNumber(a[2]),
       ctx.parseNumber(a[3]),

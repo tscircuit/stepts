@@ -17,7 +17,7 @@ export class Axis2Placement3D extends Entity {
     super()
   }
   static override parse(a: string[], ctx: ParseContext) {
-    const name = ctx.parseString(a[0])
+    const name = a[0] === "$" ? "" : ctx.parseString(a[0])
     const loc = ctx.parseRef<CartesianPoint>(a[1])
     const axis = a[2] !== "$" ? ctx.parseRef<Direction>(a[2]) : undefined
     const refd = a[3] !== "$" ? ctx.parseRef<Direction>(a[3]) : undefined

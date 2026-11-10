@@ -15,7 +15,7 @@ export class FaceOuterBound extends Entity {
   }
   static override parse(a: string[], ctx: ParseContext) {
     return new FaceOuterBound(
-      ctx.parseString(a[0]),
+      a[0] === "$" ? "" : ctx.parseString(a[0]),
       ctx.parseRef<EdgeLoop>(a[1]),
       a[2].trim() === ".T.",
     )

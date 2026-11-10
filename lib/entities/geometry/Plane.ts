@@ -15,7 +15,7 @@ export class Plane extends Entity {
   }
   static override parse(a: string[], ctx: ParseContext) {
     return new Plane(
-      ctx.parseString(a[0]),
+      a[0] === "$" ? "" : ctx.parseString(a[0]),
       ctx.parseRef<Axis2Placement3D>(a[1]),
     )
   }
