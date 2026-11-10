@@ -8,6 +8,26 @@ import { getParser } from "./registry"
 import { iterateSTEP } from "./tokenize"
 
 // Build a repo from raw STEP data
+// ISO 10303-21 §6.4.4 string escapes: \X2\..\X0\ groups hold UTF-16
+// code units, \X4\..\X0\ groups hold UTF-32 code points, and \X\hh is one
+// 8-bit character.
+function decodeStepEscapes(value: string): string {
+  return value
+    .replace(/\\X2\\([0-9A-Fa-f]+)\\X0\\/g, (_, hex: string) =>
+      (hex.match(/.{1,4}/g) ?? [])
+        .map((unit) => String.fromCodePoint(Number.parseInt(unit, 16)))
+        .join(""),
+    )
+    .replace(/\\X4\\([0-9A-Fa-f]+)\\X0\\/g, (_, hex: string) =>
+      (hex.match(/.{1,8}/g) ?? [])
+        .map((unit) => String.fromCodePoint(Number.parseInt(unit, 16)))
+        .join(""),
+    )
+    .replace(/\\X\\([0-9A-Fa-f]{2})/g, (_, hex: string) =>
+      String.fromCodePoint(Number.parseInt(hex, 16)),
+    )
+}
+
 export function parseRepository(data: string): Repository {
   const repo = new Repository()
   const ctx: ParseContext = {
@@ -23,7 +43,7 @@ export function parseRepository(data: string): Repository {
     parseString(tok: string) {
       if (!tok.startsWith("'") || !tok.endsWith("'"))
         throw new Error(`Expected string: ${tok}`)
-      return tok.slice(1, -1).replaceAll("''", "'")
+      return decodeStepEscapes(tok.slice(1, -1).replaceAll("''", "'"))
     },
   }
 
